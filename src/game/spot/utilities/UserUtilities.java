@@ -22,10 +22,11 @@ public class UserUtilities {
 		return Utilities.findInTableBySingle(value, column, statement, Config.USERS_TABLE_NAME);
 	}
 
-	public static void insertIntoUsers(String row, Statement statement) {
+	public static void insertIntoUsers(String username,String password,String nickname,String description,String photo) {
+		String[] values = new String[]{username,password,nickname,description,photo};
 		String columnStrucutre = "(" + Config.USERNAME + "," + Config.PASSWORD + "," + Config.NICKNAME + ","
 				+ Config.DESCRIPTION + "," + Config.PHOTO + "," + Config.QUESTIONSCOUNTER + ")";
-		Utilities.insertIntoTable(Config.USERS_TABLE_NAME, columnStrucutre, row, statement);
+		Utilities.insertIntoTable(Config.USERS_TABLE_NAME, values,columnStrucutre);
 	}
 
 	public static boolean existsInUsersBy(String value, String column) {

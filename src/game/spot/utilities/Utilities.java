@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import game.spot.items.Config;
+
 public class Utilities {
 	public static boolean sessionValid(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
@@ -140,15 +142,59 @@ public class Utilities {
 		return null;
 	}
 
-	public static void insertIntoTable(String tableName, String columnStructure, String row, Statement statement) {
+	public static void insertIntoTable(String tableName, String[] values, String columnStructure) {
+		Connection connection = null;
+		Statement statement = null;
 		try {
+			connection = getConnection();
+			statement = connection.createStatement();
 			/* Add user */
-			statement.executeUpdate("INSERT INTO " + tableName + columnStructure + " VALUES (" + row + ")");
+			String insertString ="INSERT INTO " + tableName + columnStructure    + " VALUES (" ;
+			
+			for(int i = 0;i<values.length;i++){
+				if(i != values.length-1)
+					insertString = insertString + values[i] + " , ";
+				else
+					insertString = insertString + values[i] + " ) ";
+				
+			}
+			statement.executeUpdate(insertString);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		finally{
+			closeConnection(connection);
+			closeStatement(statement);
+		}
 	}
 
+	public static void deleteFromTable(String tableName,  String[] columns , String[] values) {
+		Connection connection = null;
+		Statement statement = null;
+		try {
+			connection = getConnection();
+			statement = connection.createStatement();
+			/* Add user */
+			String deleteString ="DELETE FROM " + tableName + " WHERE " ;
+			for(int i = 0;i<values.length;i++){
+				if(i != values.length-1)
+					deleteString = deleteString + columns[i] + " = " + values[i] + " AND ";
+				else
+					deleteString = deleteString + columns[i] + " = " + values[i];
+			}
+			statement.executeUpdate(deleteString);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally{
+			closeConnection(connection);
+			closeStatement(statement);
+		}
+	}
+	public static void deleteFromTableById(String tableName,int id){
+		deleteFromTable(tableName, new String[]{Config.ID}, new String[]{""+id});
+	}
+	
 	public static void printTable(String tableName) {
 		Connection connection = null;
 		Statement statement = null;
@@ -247,4 +293,21 @@ public class Utilities {
 		return list.subList(start, Math.min(end, list.size()));
 	}
 
+	public static ResultSet getElementById(String tableName , int id){
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet rs = null;
+		try{
+			connection = getConnection();
+			statement = connection.createStatement();
+			rs = statement.executeQuery("SELECT * FROM " + tableName + " WHERE ID = " + id);
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		finally{
+			closeConnection(connection);
+			closeStatement(statement);
+		}
+		return rs;
+	}
 }

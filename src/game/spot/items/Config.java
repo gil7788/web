@@ -1,4 +1,5 @@
 package game.spot.items;
+
 public class Config {
 	/* Global fields */
 	public static final String ID = "id";
@@ -23,22 +24,22 @@ public class Config {
 	public static final String TEXT = "text";
 	public static final String TOPICS = "topics";
 	public static final String TIMESTAMP = "timestamp";
-	public static final String RATING = "rating";
+
 	public static final String ANSWERSCOUNTER = "answersCounter";
 	/* Questions type fields */
 	private static final String AUTHOR_TYPE = "VARCHAR(20) NOT NULL";
 	private static final String TEXT_TYPE = "VARCHAR(300) NOT NULL";
 	private static final String TOPICS_TYPE = "VARCHAR(50)";
 	private static final String TIMESTAMP_TYPE = "VARCHAR(50) NOT NULL";
-	private static final String RATING_TYPE = "INTEGER NOT NULL";
+
 	private static final String ANSWERSCOUNTER_TYPE = "INTEGER NOT NULL";
 	/* Question fields */
 	public static final String QUESTION_ID = "questionId";
 	public static final String VOTER = "voter";
 	public static final String VALUE = "value";
 	/* Questions type fields */
-	private static final String QUESTION_ID_TYPE = "INTEGER PRIMARY KEY";
-	private static final String VOTER_TYPE = "INTEGER";
+	private static final String QUESTION_ID_TYPE = "INTEGER NOT NULL";
+	private static final String VOTER_TYPE = USERNAME_TYPE;
 	private static final String VALUE_TYPE = "VARCHAR(10) PRIMARY KEY";
 	/* Names */
 	public static final String USERS_TABLE_NAME = "users";
@@ -54,11 +55,13 @@ public class Config {
 	/* Operations on questions: */
 	public static final String QUESTIONS_TABLE_CREATE = "CREATE TABLE " + QUESTIONS_TABLE_NAME + " (" + ID + " "
 			+ ID_TYPE + ", " + AUTHOR + " " + AUTHOR_TYPE + ", " + TEXT + " " + TEXT_TYPE + ", " + TOPICS + " "
-			+ TOPICS_TYPE + ", " + TIMESTAMP + " " + TIMESTAMP_TYPE + ", " + RATING + " " + RATING_TYPE + ", "
-			+ ANSWERSCOUNTER + " " + ANSWERSCOUNTER_TYPE + ")";
+			+ TOPICS_TYPE + ", " + TIMESTAMP + " " + TIMESTAMP_TYPE + ", " + ANSWERSCOUNTER + " " + ANSWERSCOUNTER_TYPE
+			+ ")";
+
 	public static final String QUESTIONS_VOTE_TABLE_CREATE = "CREATE TABLE " + QUESTIONS_VOTE_TABLE_NAME + " ("
 			+ QUESTION_ID + " " + QUESTION_ID_TYPE + ", " + VOTER + " " + VOTER_TYPE + ", " + VALUE + " " + VALUE_TYPE
 			+ ")";
+	public static final String QUESTIONS_VOTE_TABLE_ROW = QUESTION_ID + " , " + VOTER + " , " + VALUE;
 
 	/* Tests */
 	public static void main(String[] args) {

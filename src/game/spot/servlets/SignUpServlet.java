@@ -57,8 +57,7 @@ public class SignUpServlet extends HttpServlet {
 		}
 		/* If username is not taken,add him and send ok (0) */
 		else {
-			UserUtilities.insertIntoUsers("'" + username + "' , '" + password + "' , '" + nickname + "' , '"
-					+ description + "' , '" + photo + "', " + 0, statement);
+			UserUtilities.insertIntoUsers(username, password, nickname, description, photo);
 			/* prints the output */
 			System.out.println("User's database: ");
 			UserUtilities.printUsersTable();

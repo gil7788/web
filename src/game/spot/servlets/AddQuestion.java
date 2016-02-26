@@ -27,21 +27,16 @@ public class AddQuestion extends HttpServlet {
 		String dataFromClient = Utilities.readDataFromUser(request);
 		System.out.println("Got from client: " + dataFromClient);
 
-		String nickname = Utilities.getNickNameFromHttpSession(request, response);
+		String username = Utilities.getUserNameFromHttpSession(request, response);
 		Gson gson = new Gson();
 		Question newQuestion = gson.fromJson(dataFromClient, Question.class);
-		String author = nickname;
-		String text = newQuestion.getText();
-		String topics = newQuestion.getTopics();
-		String timestamp = newQuestion.getTimestamp();
-		int rating = 0;
-		int answersCounter = 0;
+		String text = newQuestion.text;
+		String topics = newQuestion.topics;
+		String timestamp = newQuestion.timestamp;
 
 		QuestionUtilities.createQuestionsTable(statement);
 		QuestionUtilities.printQuestionsTable();
-		QuestionUtilities.insertIntoQuestions(
-				"'" + author + "','" + text + "','" + topics + "','" + timestamp + "'," + rating + "," + answersCounter,
-				statement);
+		QuestionUtilities.addQuestion(username, text, topics, timestamp);
 		QuestionUtilities.printQuestionsTable();
 		Utilities.closeStatement(statement);
 		Utilities.closeConnection(connection);

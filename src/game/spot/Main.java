@@ -7,9 +7,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import game.spot.utilities.QuestionUtilities;
+import game.spot.utilities.QuestionVoteUtilities;
 import game.spot.utilities.UserUtilities;
 import game.spot.utilities.Utilities;
-import game.spot.utilities.VoteUtilities;
 
 public class Main implements ServletContextListener {
 
@@ -22,7 +22,7 @@ public class Main implements ServletContextListener {
 			System.out.println("in init method");
 			UserUtilities.createUsersTable(statement);
 			QuestionUtilities.createQuestionsTable(statement);
-			VoteUtilities.createQuestionVotesTable(statement);
+			QuestionVoteUtilities.createQuestionVotesTable(statement);
 			Utilities.closeConnection(connection);
 			Utilities.closeStatement(statement);
 		} catch (Exception e) {

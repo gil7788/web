@@ -16,12 +16,6 @@ public class QuestionUtilities {
 		Utilities.createTable(Config.QUESTIONS_TABLE_CREATE, statement);
 	}
 
-	public static void insertIntoQuestions(String row, Statement statement) {
-		String columnStructure = "(" + Config.AUTHOR + "," + Config.TEXT + "," + Config.TOPICS + "," + Config.TIMESTAMP
-				+ "," + Config.RATING + "," + Config.ANSWERSCOUNTER + ")";
-		Utilities.insertIntoTable(Config.QUESTIONS_TABLE_NAME, columnStructure, row, statement);
-	}
-
 	public static void printQuestionsTable() {
 		System.out.println("Questions Table:");
 		Utilities.printTable(Config.QUESTIONS_TABLE_NAME);
@@ -54,13 +48,12 @@ public class QuestionUtilities {
 	public static Question resultsetToQuestion(ResultSet rs) {
 		Question question = new Question();
 		try {
-			question.setId(rs.getInt(Config.ID));
-			question.setAuthor(rs.getString(Config.AUTHOR));
-			question.setText(rs.getString(Config.TEXT));
-			question.setTopics(rs.getString(Config.TOPICS));
-			question.setTimestamp(rs.getString(Config.TIMESTAMP));
-			question.setRating(rs.getString(Config.RATING));
-			question.setAnswerCount(rs.getInt(Config.ANSWERSCOUNTER));
+			question.id =(rs.getInt(Config.ID));
+			question.author = (rs.getString(Config.AUTHOR));
+			question.text = (rs.getString(Config.TEXT));
+			question.topics = (rs.getString(Config.TOPICS));
+			question.timestamp = (rs.getString(Config.TIMESTAMP));
+			question.answerCount = (rs.getInt(Config.ANSWERSCOUNTER));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -87,7 +80,7 @@ public class QuestionUtilities {
 		Comparator<Question> comp = new Comparator<Question>() {
 			@Override
 			public int compare(Question q1, Question q2) {
-				return Integer.parseInt(q2.getTimestamp()) - Integer.parseInt(q1.getTimestamp()); // Descending
+				return Integer.parseInt(q2.timestamp) - Integer.parseInt(q1.timestamp); // Descending
 			}
 		};
 		Collections.sort(questions, comp);
@@ -95,7 +88,7 @@ public class QuestionUtilities {
 
 	public static void filterUnansweredQuestions(ArrayList<Question> questions) {
 		for (Question question : questions) {
-			if (question.getAnswerCount() != 0) {
+			if (question.answerCount != 0) {
 				questions.remove(question);
 			}
 		}
@@ -103,5 +96,17 @@ public class QuestionUtilities {
 
 	public static List<Question> getQuestionsInterval(ArrayList<Question> questions, int startIndex, int endIndex) {
 		return Utilities.subList(questions, startIndex, endIndex);
+	}
+
+	// -----------------------------------------------
+	public static void addQuestion(String username,String text,String topics,String timestamp) {
+		String[] values = new String[]{username,text,topics,timestamp,"0"};
+		String columnStructure = "(" + Config.AUTHOR + "," + Config.TEXT + "," + Config.TOPICS + "," + Config.TIMESTAMP
+				+ "," + Config.ANSWERSCOUNTER + ")";
+		Utilities.insertIntoTable(Config.QUESTIONS_TABLE_NAME, values ,columnStructure);
+	}
+	
+	public static Question getQuestionFromId(int id){
+		return resultsetToQuestion(Utilities.getElementById(Config.QUESTIONS_TABLE_NAME, id));
 	}
 }
