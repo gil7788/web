@@ -1,6 +1,6 @@
 package game.spot.items;
 
-public class Answer implements Ratable,Timestampable{
+public class Answer implements Ratable, Timestampable {
 
 	public int id;
 

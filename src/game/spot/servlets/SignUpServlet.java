@@ -19,32 +19,22 @@ import game.spot.utilities.Utilities;
  * Servlet implementation class SignUpServlet
  */
 public class SignUpServlet extends HttpServlet {
+
 	private static final long serialVersionUID = 1L;
-
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		/* Start a writing object */
 		PrintWriter writer = response.getWriter();
-		/* Get data from client */
 		String dataFromClient = Utilities.readDataFromUser(request);
-		System.out.println("Got: " + dataFromClient);
-		/* Parse & Save the data */
+
+		// Parse data
 		Gson gson = new Gson();
 		NewUser user = gson.fromJson(dataFromClient, NewUser.class);
-		/* Parsed username */
-		String username = user.getUsername();
-		/* Parsed password */
-		String password = user.getPassword();
-		/* Parsed nickname */
-		String nickname = user.getNickname();
-		/* Parsed description */
-		String description = user.getDescription();
-		/* Parsed photo */
-		String photo = user.getPhoto();
+		String username = user.username;
+		String password = user.password;
+		String nickname = user.nickname;
+		String description = user.description;
+		String photo = user.photo;
 
 		/* Checks if username is already exists in the DB */
 		if (UserUtilities.existsInUsersBy(username, Config.USERNAME)) {
@@ -52,7 +42,7 @@ public class SignUpServlet extends HttpServlet {
 		}
 		/* If username is not taken,add him and send ok (0) */
 		else {
-			UserUtilities.insertIntoUsers(username, password, nickname, description, photo);
+			UserUtilities.createNewUser(username, password, nickname, description, photo);
 			/* prints the output */
 			System.out.println("User's database: ");
 			UserUtilities.printUsersTable();

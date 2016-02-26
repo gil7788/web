@@ -4,12 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
+import game.spot.items.Answer;
 import game.spot.items.Question;
-import game.spot.items.Ratable;
 
 public class QuestionUtilities {
 
@@ -49,19 +47,21 @@ public class QuestionUtilities {
 	public static Question resultsetToQuestion(ResultSet rs) {
 		Question question = new Question();
 		try {
-			question.id =(rs.getInt(Config.ID));
-			question.author = (rs.getString(Config.AUTHOR));
-			question.text = (rs.getString(Config.TEXT));
-			question.topics = (rs.getString(Config.TOPICS));
-			question.timestamp = (rs.getString(Config.TIMESTAMP));
+			question.id = rs.getInt(Config.ID);
+			question.author = rs.getString(Config.AUTHOR);
+			question.text = rs.getString(Config.TEXT);
+			question.topics = rs.getString(Config.TOPICS);
+			question.timestamp = rs.getString(Config.TIMESTAMP);
 			question.voteCount = QuestionVoteUtilities.getQuestionVoteCount(question.id);
+			question.rating = getQuestionRating(question.id);
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return question;
 	}
 
-	public static ArrayList<Question> resultsetToArrayListQuestion(ResultSet rs) {
+	public static List<Question> resultsetToArrayListQuestion(ResultSet rs) {
 		ArrayList<Question> questions = new ArrayList<Question>();
 		try {
 			while (rs.next()) {
@@ -73,15 +73,19 @@ public class QuestionUtilities {
 		return questions;
 	}
 
-	public static ArrayList<Question> getAllQuestions() {
+	public static List<Question> getAllQuestions() {
 		return resultsetToArrayListQuestion(Utilities.getAllTable(Config.QUESTIONS_TABLE_NAME));
 	}
-	
+
 	public static void filterUnansweredQuestions(List<Question> questions) {
-		for (Question question : questions) {
-			if (question.answerCount != 0) {
-				questions.remove(question);
+		try {
+			for (Question question : questions) {
+				if (AnswersUtilities.getQuestionAnswers(question.id).size() != 0) {
+					questions.remove(question);
+				}
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -90,14 +94,15 @@ public class QuestionUtilities {
 	}
 
 	// -----------------------------------------------
-	public static void addQuestion(String username,String text,String topics,String timestamp) {
-		String[] values = new String[]{username,text,topics,timestamp,"0"};
+
+	public static void addQuestion(String username, String text, String topics, String timestamp) {
+		String[] values = new String[] { username, text, topics, timestamp, "0" };
 		String columnStructure = "(" + Config.AUTHOR + "," + Config.TEXT + "," + Config.TOPICS + "," + Config.TIMESTAMP
 				+ "," + Config.ANSWERSCOUNTER + ")";
-		Utilities.insertIntoTable(Config.QUESTIONS_TABLE_NAME, values ,columnStructure);
+		Utilities.insertIntoTable(Config.QUESTIONS_TABLE_NAME, values, columnStructure);
 	}
-	
-	public static Question getQuestionFromId(int id){
+
+	public static Question getQuestionFromId(int id) {
 		return resultsetToQuestion(Utilities.getElementById(Config.QUESTIONS_TABLE_NAME, id));
 	}
 
@@ -107,10 +112,33 @@ public class QuestionUtilities {
 		return questions;
 	}
 
-	public static List<Question> getExistingQuestions(int index){
+	public static List<Question> getExistingQuestions(int index) {
 		List<Question> questions = getAllQuestions();
 		Utilities.sortByRating(questions);
-		questions = getQuestionsInterval(questions, index, index+20);
-		return questions;		
+		questions = getQuestionsInterval(questions, index, index + 20);
+		return questions;
 	}
+
+	public static double getQuestionRating(int id) {
+		int voteCount = QuestionVoteUtilities.getQuestionVoteCount(id);
+		double answersRating = 0;
+
+		List<Answer> answers;
+		try {
+			answers = AnswersUtilities.getQuestionAnswers(id);
+
+			for (Answer answer : answers) {
+				answersRating += answer.rating;
+			}
+			if (answers.size() != 0) {
+				answersRating /= answers.size();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return voteCount * 0.2 + answersRating * 0.8;
+
+	}
+
 }

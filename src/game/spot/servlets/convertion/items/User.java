@@ -1,15 +1,9 @@
 package game.spot.servlets.convertion.items;
+
 public class User {
 
-	private String userName;
-	private String password;
+	public String username;
 
-	public String getUserName() {
-		return userName;
-	}
-
-	public String getPassword() {
-		return password;
-	}
+	public String password;
 
 }

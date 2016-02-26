@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import game.spot.items.Answer;
 
@@ -58,6 +60,31 @@ public class AnswersUtilities {
 		}
 
 		return answer;
+	}
+
+	public static List<Answer> getQuestionAnswers(int questionId) throws SQLException {
+		Connection connection = Utilities.getConnection();
+		Statement statement = Utilities.getStatement(connection);
+		ResultSet rs = null;
+
+		List<Answer> answers = new ArrayList<Answer>();
+		try {
+			rs = statement.executeQuery(
+					"SELECT * FROM " + Config.ANSWERS_TABLE_NAME + " WHERE " + Config.QUESTION_ID + " = " + questionId);
+			while (rs.next()) {
+				Answer answer = resultSetToAnswer(rs);
+				answers.add(answer);
+			}
+		} catch (SQLException e) {
+			throw e;
+
+		} finally {
+			Utilities.closeResultSet(rs);
+			Utilities.closeStatement(statement);
+			Utilities.closeConnection(connection);
+		}
+
+		return answers;
 	}
 
 }

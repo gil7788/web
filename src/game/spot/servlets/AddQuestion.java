@@ -38,7 +38,6 @@ public class AddQuestion extends HttpServlet {
 		if (Utilities.sessionValid(request, response)) {
 			writer.println("0");
 		}
-
 	}
 
 }

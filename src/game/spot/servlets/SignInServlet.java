@@ -1,4 +1,5 @@
 package game.spot.servlets;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -33,8 +34,8 @@ public class SignInServlet extends HttpServlet {
 
 		Gson gson = new Gson();
 		User user = gson.fromJson(dataFromClient, User.class);
-		String username = user.getUserName();
-		String password = user.getPassword();
+		String username = user.username;
+		String password = user.password;
 
 		/* Sends data from server side */
 		PrintWriter writer = response.getWriter();
