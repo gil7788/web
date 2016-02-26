@@ -1,4 +1,4 @@
-package game.spot.items;
+package game.spot.servlets.convertion.items;
 public class User {
 
 	private String userName;

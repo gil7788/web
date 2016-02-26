@@ -1,12 +1,18 @@
 package game.spot.items;
 
 public class Question {
+	private int id;
 	private String author;
 	private String text;
 	private String topics;
 	private String timestamp;
 	private String rating;
-
+	private int answerCount;
+	
+	public int getId(){
+		return id;
+	}
+	
 	public String getAuthor() {
 		return author;
 	}
@@ -27,6 +33,14 @@ public class Question {
 		return rating;
 	}
 
+	public int getAnswerCount(){
+		return answerCount;
+	}
+
+	public void setId(int id){
+		 this.id = id;
+	}
+	
 	public void setAuthor(String author) {
 		this.author = author;
 	}
@@ -47,4 +61,7 @@ public class Question {
 		this.rating = rating;
 	}
 
+	public void setAnswerCount(int answerCount){
+		this.answerCount = answerCount;
+	}
 }

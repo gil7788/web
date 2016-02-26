@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import com.google.gson.Gson;
 
 import game.spot.items.Config;
-import game.spot.items.User;
+import game.spot.servlets.convertion.items.User;
 import game.spot.utilities.UserUtilities;
 import game.spot.utilities.Utilities;
 

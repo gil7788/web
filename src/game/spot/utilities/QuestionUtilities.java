@@ -1,8 +1,15 @@
 package game.spot.utilities;
+
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import game.spot.items.Config;
+import game.spot.items.Question;
 
 public class QuestionUtilities {
 	public static void createQuestionsTable(Statement statement) {
@@ -20,6 +27,7 @@ public class QuestionUtilities {
 		Utilities.printTable(Config.QUESTIONS_TABLE_NAME);
 	}
 
+	/**************************/
 	public static ResultSet orderQuestionsBy(Statement statement, String orderBy) {
 		return Utilities.orderBy(Config.QUESTIONS_TABLE_NAME, statement, orderBy);
 	}
@@ -40,5 +48,60 @@ public class QuestionUtilities {
 		String[] values = { "0", String.format("%d", index), String.format("%d", index + 20) };
 		return orderByAndFilterQuestions(statement, orderBy, columns, ops, values);
 
+	}
+
+	/**************************/
+	public static Question resultsetToQuestion(ResultSet rs) {
+		Question question = new Question();
+		try {
+			question.setId(rs.getInt(Config.ID));
+			question.setAuthor(rs.getString(Config.AUTHOR));
+			question.setText(rs.getString(Config.TEXT));
+			question.setTopics(rs.getString(Config.TOPICS));
+			question.setTimestamp(rs.getString(Config.TIMESTAMP));
+			question.setRating(rs.getString(Config.RATING));
+			question.setAnswerCount(rs.getInt(Config.ANSWERSCOUNTER));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return question;
+	}
+
+	public static ArrayList<Question> resultsetToArrayListQuestion(ResultSet rs) {
+		ArrayList<Question> questions = new ArrayList<Question>();
+		try {
+			while (rs.next()) {
+				questions.add(resultsetToQuestion(rs));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return questions;
+	}
+
+	public static ArrayList<Question> getAllQuestions() {
+		return resultsetToArrayListQuestion(Utilities.getAllTable(Config.QUESTIONS_TABLE_NAME));
+	}
+
+	public static void orderQuestionsByTimestamp(ArrayList<Question> questions) {
+		Comparator<Question> comp = new Comparator<Question>() {
+			@Override
+			public int compare(Question q1, Question q2) {
+				return Integer.parseInt(q2.getTimestamp()) - Integer.parseInt(q1.getTimestamp()); // Descending
+			}
+		};
+		Collections.sort(questions, comp);
+	}
+
+	public static void filterUnansweredQuestions(ArrayList<Question> questions) {
+		for (Question question : questions) {
+			if (question.getAnswerCount() != 0) {
+				questions.remove(question);
+			}
+		}
+	}
+
+	public static List<Question> getQuestionsInterval(ArrayList<Question> questions, int startIndex, int endIndex) {
+		return Utilities.subList(questions, startIndex, endIndex);
 	}
 }

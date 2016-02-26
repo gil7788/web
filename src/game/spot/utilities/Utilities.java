@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -79,8 +81,7 @@ public class Utilities {
 
 		try {
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-			connection = DriverManager.getConnection(
-					"jdbc:derby:C:\\Users\\student\\Desktop\\Univesity\\SemesterA2016\\Web\\ServerSide\\Database\\projectDatabase;create=true");
+			connection = DriverManager.getConnection("jdbc:derby:projectDatabase;create=true");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -155,7 +156,7 @@ public class Utilities {
 			connection = Utilities.getConnection();
 			statement = connection.createStatement();
 
-			ResultSet rs = getAllTable(tableName, statement);
+			ResultSet rs = getAllTable(tableName);
 			ResultSetMetaData rsmd = rs.getMetaData();
 			int columnsNumber = rsmd.getColumnCount();
 
@@ -180,24 +181,6 @@ public class Utilities {
 		}
 	}
 
-	public static void printResultSet(ResultSet rs) {
-		try {
-			ResultSetMetaData rsmd = rs.getMetaData();
-			int columnsNumber = rsmd.getColumnCount();
-			while (rs.next()) {
-				for (int i = 1; i <= columnsNumber; i++) {
-					if (i > 1)
-						System.out.print(",  ");
-					String columnValue = rs.getString(i);
-					System.out.print(columnValue + " " + rsmd.getColumnName(i));
-				}
-				System.out.println("");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public static ResultSet orderBy(String tableName, Statement statement, String orderParameter) {
 		ResultSet rs = null;
 		try {
@@ -208,12 +191,19 @@ public class Utilities {
 		return rs;
 	}
 
-	public static ResultSet getAllTable(String tableName, Statement statement) {
+	public static ResultSet getAllTable(String tableName) {
+		Connection connection = null;
+		Statement statement = null;
 		ResultSet rs = null;
 		try {
+			connection = getConnection();
+			statement = connection.createStatement();
 			rs = statement.executeQuery("SELECT * FROM " + tableName);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			closeConnection(connection);
+			closeStatement(statement);
 		}
 		return rs;
 	}
@@ -248,6 +238,13 @@ public class Utilities {
 			e.printStackTrace();
 		}
 		return rs;
+	}
+
+	public static <T> List<T> subList(List<T> list, int start, int end) {
+		if (list.size() <= start) {
+			return new ArrayList<T>();
+		}
+		return list.subList(start, Math.min(end, list.size()));
 	}
 
 }

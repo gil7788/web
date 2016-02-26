@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
-import game.spot.items.User;
+import game.spot.servlets.convertion.items.User;
 import game.spot.utilities.Utilities;
 
 public class VoteQuestion extends HttpServlet {

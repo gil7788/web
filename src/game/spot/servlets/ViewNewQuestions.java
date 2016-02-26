@@ -1,17 +1,19 @@
 package game.spot.servlets;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
+import game.spot.items.Question;
 import game.spot.utilities.QuestionUtilities;
-import game.spot.utilities.Utilities;
 
 /**
  * Servlet implementation class viewNewQuestions
@@ -20,21 +22,20 @@ public class ViewNewQuestions extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String orderBy = request.getParameter("orderBy");
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		int index = Integer.parseInt(request.getParameter("index"));
-		Connection connection = Utilities.getConnection();
-		Statement statement = Utilities.getStatement(connection);
-
+		
 		QuestionUtilities.printQuestionsTable();
-		ResultSet rs = QuestionUtilities.getNewQuestions(statement, orderBy, index);
-		System.out.println("Resultset is ordered by timestap: ");
-		Utilities.printResultSet(rs);
-
-		Utilities.closeResultSet(rs);
-		Utilities.closeStatement(statement);
-		Utilities.closeConnection(connection);
+		
+		ArrayList<Question> questions = QuestionUtilities.getAllQuestions();
+		QuestionUtilities.orderQuestionsByTimestamp(questions);
+		QuestionUtilities.filterUnansweredQuestions(questions);
+		List<Question> newQuestions = QuestionUtilities.getQuestionsInterval(questions,index,index+20);
+		String resultQuestions = new Gson().toJson(newQuestions);
+		PrintWriter writer = response.getWriter();
+		writer.println(resultQuestions);
+		
+		System.out.println("ArrayList is ordered by timestap: ");
 	}
 
 }

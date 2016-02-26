@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 
 import game.spot.items.Config;
-import game.spot.items.NewUser;
+import game.spot.servlets.convertion.items.NewUser;
 import game.spot.utilities.UserUtilities;
 import game.spot.utilities.Utilities;
 
