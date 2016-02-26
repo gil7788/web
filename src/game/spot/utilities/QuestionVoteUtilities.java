@@ -6,13 +6,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import game.spot.items.Config;
 import game.spot.servlets.convertion.items.QuestionVote;
 
 public class QuestionVoteUtilities {
 
-	public static void createQuestionVotesTable(Statement statement) {
-		Utilities.createTable(Config.QUESTIONS_VOTE_TABLE_CREATE, statement);
+	public static void createQuestionVotesTable() {
+		Utilities.createTable(Config.QUESTIONS_VOTE_TABLE_CREATE);
 	}
 
 	public static QuestionVote resultsetToQuestionVote(ResultSet rs) {
@@ -62,9 +61,10 @@ public class QuestionVoteUtilities {
 	}
 
 	public static int getQuestionVoteCount(int id) {
-		ArrayList<QuestionVote> votes = resultsetToQuestionsVote(Utilities.getElementById(Config.QUESTIONS_VOTE_TABLE_NAME, id));
+		ArrayList<QuestionVote> votes = resultsetToQuestionsVote(
+				Utilities.getElementById(Config.QUESTIONS_VOTE_TABLE_NAME, id));
 		int count = 0;
-		for(QuestionVote vote : votes){
+		for (QuestionVote vote : votes) {
 			count += vote.getValue();
 		}
 		return count;

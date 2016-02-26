@@ -1,0 +1,70 @@
+@media screen and (max-width: 768px) {
+  .col-xs-0{
+    display: none;
+  }
+}
+
+body{
+  background: rgb(250,250,250);
+}
+.lightGrey{
+  background-color: #e7e7e7;
+}
+.logo{
+  width: 50px;
+  height: 50px;
+}
+.secondary-navbar > li{
+  float: none;
+  display:inline-block;
+}
+.mainSection{
+  margin-top: 10px;
+  width: 90%;
+  margin: auto;
+  border:solid black 1px;
+  border-radius: 4px;
+}
+.mainSectionBar{
+
+}
+.questions,
+.tutorials,
+.addNewTopic{
+  height: 30em;
+}
+.iFrame{
+  width:100%;
+  height: 400px;
+}
+.eliteUsersTitle{
+  text-align: center;
+  font-weight: bolder;
+  font-size: 2em;
+}
+.eliteUsersList{
+  border-radius: 0;
+  padding: 0;
+}
+.eliteUsersList > .list-group-item{
+  padding: 0;
+}
+.btn-addition{
+  color:white;
+  font-weight: bolder;
+  font-size: 1.1em;
+  border-radius: 0;
+}
+.btn-addition:hover{
+  color: rgb(110, 200, 95);
+  background-color: white;
+}
+
+.yellow{
+  background: yellow;
+  height: 1000px;
+}
+.blue{
+  background: blue;
+  height: 1000px;
+}

@@ -1,15 +1,14 @@
 package game.spot.utilities;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import game.spot.items.Config;
-
 public class UserUtilities {
 
-	public static void createUsersTable(Statement statement) {
-		Utilities.createTable(Config.USERS_TABLE_CREATE, statement);
+	public static void createUsersTable() {
+		Utilities.createTable(Config.USERS_TABLE_CREATE);
 	}
 
 	public static void printUsersTable() {

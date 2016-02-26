@@ -2,8 +2,6 @@ package game.spot.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.Statement;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,8 +19,6 @@ public class AddQuestion extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		Connection connection = Utilities.getConnection();
-		Statement statement = Utilities.getStatement(connection);
 		PrintWriter writer = response.getWriter();
 		String dataFromClient = Utilities.readDataFromUser(request);
 		System.out.println("Got from client: " + dataFromClient);
@@ -34,12 +30,11 @@ public class AddQuestion extends HttpServlet {
 		String topics = newQuestion.topics;
 		String timestamp = newQuestion.timestamp;
 
-		QuestionUtilities.createQuestionsTable(statement);
+		QuestionUtilities.createQuestionsTable();
 		QuestionUtilities.printQuestionsTable();
 		QuestionUtilities.addQuestion(username, text, topics, timestamp);
 		QuestionUtilities.printQuestionsTable();
-		Utilities.closeStatement(statement);
-		Utilities.closeConnection(connection);
+
 		if (Utilities.sessionValid(request, response)) {
 			writer.println("0");
 		}

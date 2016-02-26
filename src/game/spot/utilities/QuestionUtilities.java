@@ -8,12 +8,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import game.spot.items.Config;
 import game.spot.items.Question;
 
 public class QuestionUtilities {
-	public static void createQuestionsTable(Statement statement) {
-		Utilities.createTable(Config.QUESTIONS_TABLE_CREATE, statement);
+
+	public static void createQuestionsTable() {
+		Utilities.createTable(Config.QUESTIONS_TABLE_CREATE);
 	}
 
 	public static void printQuestionsTable() {
@@ -39,7 +39,7 @@ public class QuestionUtilities {
 	public static ResultSet getNewQuestions(Statement statement, String orderBy, int index) {
 		String[] columns = { Config.ANSWERSCOUNTER, Config.ID, Config.ID };
 		String[] ops = { "=", ">=", "<" };
-		String[] values = { "0", String.format("%d", index), String.format("%d", index + 20) };
+		String[] values = { "0", "" + index, "" + (index + 20) };
 		return orderByAndFilterQuestions(statement, orderBy, columns, ops, values);
 
 	}
