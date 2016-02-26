@@ -1,0 +1,79 @@
+.pointer{
+  cursor:pointer;
+}
+.normalCursor{
+  cursor: auto;
+}
+.firstQuestion{
+  border-radius: 2em 2em 0 0 ;
+}
+.lastQuestion{
+  border-radius: 0 0 2em 2em ;
+}
+.timestamp{
+  text-align: right;
+}
+.glyphicon-triangle-top,
+.glyphicon-triangle-bottom{
+  font-size: 2.5em;
+}
+.glyphicon-triangle-top:hover,
+.glyphicon-triangle-bottom:hover{
+  color:rgb(91,192,222);
+}
+.center{
+  margin: auto;
+}
+.questionsRating{
+  margin: 0;
+  text-align: center;
+  font-size: 2.5em;
+}
+@media screen and (max-width: 800px) {
+    .questionsRating {
+      font-size: 2em;
+    }
+    .glyphicon{
+      font-size: 2em;
+    }
+}
+@media screen and (max-width: 600px) {
+    .questionsRating {
+      font-size: 1.5em;
+    }
+    .glyphicon-triangle-top,
+    .glyphicon-triangle-bottom{
+      font-size: 1.5em;
+    }
+}
+.questionsText{
+  padding-left: 3em;
+  word-wrap: break-word;
+}
+.questionsTopic{}
+.usersNickname{
+  padding-left: 3em;
+}
+/*Provied answers:*/
+.glyphicon-chevron-up,
+.glyphicon-chevron-down{
+  font-size: 0.8em;
+}
+.moreAnswersButton{
+  margin-bottom: 1em;
+}
+/*Answer:*/
+.subTitle{
+  margin-left:0.5em;
+  text-decoration: underline;
+}
+.answerHeader{
+  position: relative;
+}
+
+.glyphicon-export{
+  font-size: 2rem;
+}
+.buttonSpacing{
+  margin-top: 2em;
+}

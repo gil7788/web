@@ -1,0 +1,54 @@
+<html ng-App="leaderboard">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="HTMLPages/leaderboard/leaderboardStyles.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/utilities.css">
+  <link rel="stylesheet" href="css/formValidationStyles.css">
+  <script type="text/javascript" src="js/angular.min.js"></script>
+  <script  type="text/javascript" src="HTMLPages/leaderboard/leaderboardControllers.js"></script>
+  <title>LeaderBoard</title>
+</head>
+<body class="lightGrey" ng-controller="leaderboardController">
+  <h1 class="mainTitle">LeaderBoard:</h1>
+  <!--Top user template-->
+  <!--X20-->
+  <div class="topUsersContainer col-xs-offset-1 col-xs-10 lightGrey" ng-repeat="user in topUsers | limitTo:20">
+    <div class="topUserInfo lightGreyContentBorder lightGreyContent" ng-class="{firstUser: $first , lastUser: $last}" ng-init="toggle = 0">
+      <div class="row topRow">
+        <p class="usersPhoto col-xs-2 col-xs-offset-1" ng-model="photo"><img class="profilePicture" src="{{user.photo}}" alt=""></p>
+        <p class="usersNickName leaderboardNickname col-xs-5" ng-model="nickname" ng-click="toggle =  (toggle + 1)%2">{{user.nickname}}</p>
+      </div>
+      <div class="hiddenContentContainer" ng-show="toggle == 1">
+            <p class="usersPhoto" ng-model="username">Username: {{user.username}}</p>
+            <p class="usersRating" ng-model="rating">Rating: {{user.rating}}</p>
+            <p class="usersDescription" ng-model="description" ng-show="user.description != ''">Description: {{user.description}}</p>
+            <p class="usersExpertiseProfile" ng-model="usersExpertiseProfile"></p>
+            <!--Users last asked questions-->
+            <!--X5-->
+            <h2 class="subTitle col-xs-6">Latest Questions:</h2>
+            <div class="usersLastAskedQuestions col-xs-6" ng-model="usersLastAskedQuestions" ng-repeat="question in user.latestQuestions | orderBy: timestamp  | limitTo:5">
+              <p class="timestamp">timestamp: {{question.timestamp | date: 'dd/mm/yyyy hh:mm:ss'}}</p>
+              <p class="questionsText">questionsText: {{question.questionsText}}</p>
+              <p class="questionsTopics">questionsTopics: {{question.questionsTopics}}</p>
+              <p class="questionsRating">questionsRating: {{question.questionsRating}}</p>
+            </div>
+            <!--Users last Answers and thier Questions-->
+            <!--X5-->
+            <h2 class="subTitle col-xs-offset-6">Latest Answers:</h2>
+            <div class="usersLastAnswers col-xs-offset-6" ng-model="usersLastAskedAnswers" ng-repeat="answer in user.latestAnswers | orderBy: timestamp |limitTo:5">
+              <!--The Question:-->
+              <div class="timestamp">timestamp: {{answer.timestamp | date: 'dd/mm/yyyy hh:mm:ss'}}</div>
+              <div class="questionsText">questionsText: {{answer.questionsText}}</div>
+              <div class="questionsTopics">questionsTopics: {{answer.questionsTopics}}</div>
+              <div class="questionsRating">questionsRating: {{answer.questionsRating}}</div>
+              <!--The Answer:-->
+              <div class="answersText">answersText: {{answer.answersText}}</div>
+              <div class="answersRating">answersRating: {{answer.answersRating}}</div>
+            </div>
+          </div>
+    </div>
+  </div>
+
+</body>
+</html>

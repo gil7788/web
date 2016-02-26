@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html ng-App="questionForm">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="HTMLPages/questionForm/questionFormStyles.css">
+  <link rel="stylesheet" href="css/formValidationStyles.css">
+  <link rel="stylesheet" href="css/utilities.css">
+  <script src="js/angular.min.js"></script><!--Angular-->
+  <script src="HTMLPages/questionForm/questionFormControllers.js"></script>
+  <title>New Question</title>
+</head>
+<body class="lightGrey" ng-controller="questionFormController">
+  <h1 class="mainTitle">Add New Question</h1>
+  <form name="form" ng-submit="sendQuestion()">
+      <!--Question Text-->
+      <div class="form-group questionForm">
+        <div class="row">
+          <label for="text">Question Text:</label>
+        </div>
+        <div class="row">
+          <textarea class="form-control" ng-model="text" name="text" ng-maxlength="300" required ng-class="{valid: form.text.$valid && form.text.$dirty , invalid: !form.text.$valid && form.text.$dirty}" rows="6" placeholder="Question text (up to 300 characters)"></textarea>
+          <div class="errors">
+            <p class="error" ng-show="form.text.$error.maxlength && form.text.$dirty">Question's text shouldn't be longer than 300 characters</p>
+            <p class="error" ng-show="form.text.$error.required && form.text.$dirty">Question's text is required</p>
+          </div>
+        </div>
+      </div>
+      <!--Question Topic's-->
+      <div class="form-group questionForm">
+        <div class="row">
+          <label for="Nickname" class="control-label">Question Topic's:</label>
+        </div>
+        <div class="row">
+          <input type="text" class="form-control" ng-model="topics" name="topics" ng-maxlength="50" ng-class="{valid: form.topics.$valid && form.topics.$dirty , invalid: !form.topics.$valid && form.topics.$dirty}" placeholder="Question Topic's (up to 50 characters)">
+        </div>
+        <div class="errors">
+          <div class="error">
+            <p class="error" ng-show="form.topics.$error.maxlength && form.topics.$dirty">Question's topics shouldn't be longer than 50 characters</p>
+          </div>
+        </div>
+      </div>
+      <input type="submit" class="btn btn-success col-xs-offset-4 col-xs-4 custom-button" ng-class="{disabled:!form.$valid}" value="Send Question"/>
+  </form>
+</body>
+</html>

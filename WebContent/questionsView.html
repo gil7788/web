@@ -1,0 +1,143 @@
+<html ng-App="questionsView">
+<head>
+  <meta charset="UTF-8">
+  <title>Questions View</title>
+  <link rel="stylesheet" href="HTMLPages/questionsView/questionsViewStyles.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/utilities.css">
+  <link rel="stylesheet" href="css/formValidationStyles.css">
+  <script type="text/javascript" src="js/angular.min.js"></script>
+  <script  type="text/javascript" src="HTMLPages/questionsView/questionsViewControllers.js"></script>
+</head>
+<body ng-controller="questionsController" class="lightGrey" data-ng-init="getQuestions()">
+  <h1 class="mainTitle">Questions</h1>
+  <!--Questions Template-->
+  <div class="questions" ng-repeat="question in questions">
+    <!--Question Template-->
+    <div class="question lightGreyContentBorder col-xs-offset-1 col-xs-10 lightGreyContent" ng-class="{firstQuestion: $first , lastQuestion: $last}" >
+      <div class="questionContent pointer" ng-class="{normalCursor: toggle == 1}" ng-click="toggle=1">
+        <p class="timestamp" >{{question.timestamp | date: 'dd/mm/yyyy hh:mm:ss'}}</p>
+        <div class="row contentContainer">
+          <div class="col-xs-2">
+            <div class="row">
+            {{toggle}}
+              <span class="glyphicon glyphicon-triangle-top col-xs-offset-3 col-xs-3" ng-click="$parent.toggle = ($parent.toggle+1)%2 "></span>
+            </div>
+            <div class="row">
+              <p class="questionsRating col-xs-offset-1 col-xs-11">{{question.rating}}</p>
+            </div>
+            <div class="row">
+              <span class="glyphicon glyphicon-triangle-bottom col-xs-offset-3 col-xs-3" ng-click="downVote($index)"></span>
+            </div>
+          </div>
+          <div class="col-xs-9">
+            <p class="questionsText" >{{question.text}}</p>
+            <p class="usersNickname" >Author's nickname: {{question.usersNickname}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <p class="questionsTopic col-xs-9" >Question's Topic's: {{question.topic}}</p>
+        </div>
+      </div>
+
+      <div class="allAnswers" ng-show="toggle == 1">
+        <!--Best Answer-->
+        <div class="bestAnswerContainer col-xs-offset-1 col-xs-10" ng-show="question.answers">
+          <h2 class="subTitle">Best Answer:</h2>
+          <p class="timestamp" >{{question.answers[0].timestamp | date: 'dd/mm/yyyy hh:mm:ss'}}</p>
+          <div class="row contentContainer">
+            <div class="col-xs-2">
+              <div class="row">
+                <span class="glyphicon glyphicon-triangle-top col-xs-offset-3 col-xs-3" ng-click="upVote($index)"></span>
+              </div>
+              <div class="row">
+                <p class="questionsRating col-xs-offset-1 col-xs-11">{{question.answers[0].rating}}</p>
+              </div>
+              <div class="row">
+                <span class="glyphicon glyphicon-triangle-bottom col-xs-offset-3 col-xs-3" ng-click="downVote($index)"></span>
+              </div>
+            </div>
+            <div class="col-xs-9">
+              <p class="questionsText" >{{question.answers[0].text}}</p>
+              <p class="usersNickname" >Author's nickname: {{question.answers[0].usersNickname}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <!--Provid Answer-->
+          <!--Open in new Tab-->
+          <!--Show button-->
+          <button class="btn-info col-xs-12 moreAnswersButton" ng-show="(question.answers.length > 2) && (showAllQuestions%2 == 0)" ng-click="showAllQuestions = (showAllQuestions + 1) %2">
+            View more ({{question.answers.length-1}}) answers
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </button>
+          <!--Hide button-->
+          <button class="btn-info col-xs-12 moreAnswersButton" ng-show="(question.answers.length > 2) && (showAllQuestions%2 == 1)" ng-click="showAllQuestions = (showAllQuestions + 1) %2">
+            Hide answers
+            <span class="glyphicon glyphicon-chevron-up"></span>
+          </button>
+        </div>
+        <div class="row">
+          <!--Show button-->
+          <button class="btn-info col-xs-12 moreAnswersButton" ng-show="(question.answers.length == 2) && (showAllQuestions%2 == 0)" ng-click="showAllQuestions = (showAllQuestions + 1) %2">
+            View 1 more answer
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </button>
+          <!--Hide button-->
+          <button class="btn-info col-xs-12 moreAnswersButton" ng-show="(question.answers.length == 2) && (showAllQuestions%2 == 1)" ng-click="showAllQuestions = (showAllQuestions + 1) %2">
+            Hide answer
+            <span class="glyphicon glyphicon-chevron-up"></span>
+          </button>
+        </div>
+        <!--Rest of the Answers:-->
+        <div class="bestAnswerContainer col-xs-offset-1 col-xs-10" ng-repeat="answer in question.answers" ng-if="!($index == 0)" ng-show="showAllQuestions">
+          <p class="timestamp" >{{answer.timestamp | date: 'dd/mm/yyyy hh:mm:ss'}}</p>
+          <div class="row contentContainer">
+            <div class="col-xs-2">
+              <div class="row">
+                <span class="glyphicon glyphicon-triangle-top col-xs-offset-3 col-xs-3" ng-click="upVote($index)"></span>
+              </div>
+              <div class="row">
+                <p class="questionsRating col-xs-offset-1 col-xs-11">{{answer.rating}}</p>
+              </div>
+              <div class="row">
+                <span class="glyphicon glyphicon-triangle-bottom col-xs-offset-3 col-xs-3" ng-click="downVote($index)"></span>
+              </div>
+            </div>
+            <div class="col-xs-9">
+              <p class="questionsText" >{{answer.text}}</p>
+              <p class="usersNickname" >Author's nickname: {{answer.usersNickname}}</p>
+            </div>
+          </div>
+        </div>
+        <!--Answer Input Field-->
+        <div class="answerForm">
+          <div class="answerHeader row">
+            <h2 class="subTitle col-xs-10">Provide an Answer:</h2>
+            <div class="btn btn-default col-xs-1" title="Open in new tab">
+              <span class="glyphicon glyphicon-export"></span>
+          </div>
+          </div>
+          <!--Answers Text-->
+          <form ng-model="answersDescription" name="answersDescription">
+              <div class="row">
+                <div class="form-group col-xs-offset-1 col-xs-10">
+                <textarea class="form-control" ng-model="description" name="description" ng-maxlength="300" required ng-class="{valid: answersDescription.description.$valid && answersDescription.description.$dirty , invalid: !answersDescription.description.$valid && answersDescription.description.$dirty}" rows="6" placeholder="Question text (up to 300 characters)"></textarea>
+                <div class="errors">
+                  <p class="error" ng-show="answersDescription.description.$error.maxlength && answersDescription.description.$dirty">Question's text shouldn't be longer than 300 characters</p>
+                  <p class="error" ng-show="answersDescription.description.$error.required && answersDescription.description.$dirty">Question's text is required</p>
+                </div>
+                <div class="row">
+                  <div class="btn btn-info col-xs-offset-1 col-xs-10 buttonSpacing" ng-class="{disabled: !answersDescription.$valid}" ng-click="validate(description)">Send</div>
+
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

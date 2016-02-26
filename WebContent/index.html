@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html ng-App="indexControllers">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/formValidationStyles.css">
+  <link rel="stylesheet" href="css/utilities.css">
+  <link rel="stylesheet" href="HTMLPages/index/style.css">
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script><!--Angular-->
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="HTMLPages/index/appIndex.js"></script><!--My Controllers-->
+
+  <title>Game Zone</title>
+</head>
+
+<body ng-controller="panelController" class="lightGrey">
+  <div class="row">
+    <header>
+      <h1 class="text-center">Game Zone</h1>
+    </header>
+  </div>
+  <div class="carousel slide" id="mainCarousel">
+    <div class="carousel-inner" id="carousel">
+      <div class="item" ng-class="{ active: isSet(0)}">
+        <div class="container">
+          <form class="authenticationContainer clearfix" name="signInForm" ng-submit="sendLoginRequest()">
+            <!--UserName-->
+            <div class="form-group">
+              <div class="row">
+                <label for="Username" class="control-label ">Username:</label>
+              </div>
+              <div class="row">
+                <input type="text" ng-model="signInUserName" name="userName" required class="form-control logInForm" placeholder="Username">
+                <div class="errors">
+                  <div class="error" ng-show="signInForm.userName.$error.required && signInForm.userName.$dirty">Username is required</div>
+                </div>
+              </div>
+            </div>
+            <!--Password-->
+            <div class="form-group">
+              <div class="row">
+                <label for="Password" class="control-label ">Password:</label>
+              </div>
+              <div class="row">
+                <input type="password" ng-model="signInPassword" name="password" required class="form-control logInForm" placeholder="Password">
+                <div class="errors">
+                  <div class="error" ng-show="signInForm.password.$error.required && signInForm.password.$dirty">Password is required</div>
+                  <div class="error" ng-show="$scope.authenticationError">	The username and password do not match {{$scope.authenticationError}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <!--Remember Me CheckBox-->
+              <div class="form-group">
+                  <div class="checkbox col-xs-5">
+                    <label>
+                      <input type="checkbox" class=""> Remember me
+                    </label>
+                  </div>
+                  <!--Forgot Password-->
+                  <a href="#password" class="col-xs-offset-2 col-xs-5">Forgot password?</a>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                  <a href="#mainCarousel" class="carousel-control" data-target="#carousel" slide-to="next"></a>
+                  <input type="submit" ng-class="{disabled: !signInForm.$valid}" class="btn btn-success col-xs-5" value="Sign In"/>
+                  <div class="btn btn-primary col-xs-offset-2 col-xs-5" ng-click="setPanel(1)">Sign Up</div>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+      <form class="item" name="signUpForm" ng-submit="sendRegisterRequest()" ng-class="{ active: isSet(1)}" novalidate>
+        <div class="authenticationContainer">
+          <!--UserName-->
+          <div class="form-group">
+            <div class="row">
+              <label for="Username" class="control-label">Username:</label>
+            </div>
+            <div class="row">
+              <input type="text"  ng-model="userName"  name="userName" ng-maxlength="10" required ng-class="{ valid: (signUpForm.userName.$dirty && signUpForm.userName.$valid) ,invalid:(signUpForm.userName.$dirty && !signUpForm.userName.$valid)  }" class="form-control logInForm" placeholder="Username" >
+              <div class="errors">
+                <p class="error" ng-show="signUpForm.userName.$error.maxlength && signUpForm.userName.$dirty">Username shouldn't be longer than 10 characters.</p>
+                <p class="error" ng-show="signUpForm.userName.$error.required  && signUpForm.userName.$dirty">Username is required</p>
+              </div>
+            </div>
+          </div>
+          <!--Password-->
+          <div class="form-group">
+            <div class="row">
+              <label for="Password" class="control-label ">Password:</label>
+            </div>
+            <div class="row">
+              <input type="password"  ng-model="password" name="password" ng-maxlength="8" required ng-class="{ valid: (signUpForm.password.$dirty && signUpForm.password.$valid) ,invalid:(signUpForm.password.$dirty && !signUpForm.password.$valid)  }" class="form-control logInForm" id="Password" placeholder="Password">
+              <div class="errors">
+                <p class="error" ng-show="signUpForm.password.$error.maxlength && signUpForm.password.$dirty">Password shouldn't be longer than 8 characters.</p>
+                <p class="error" ng-show="signUpForm.password.$error.required  && signUpForm.password.$dirty">Password is required</p>
+              </div>
+            </div>
+          </div>
+          <!--Nickname-->
+          <div class="form-group">
+            <div class="row">
+              <label for="Nickname" class="control-label">Nickname:</label>
+            </div>
+            <div class="row">
+              <input type="text" ng-model="nickName" name="nickName" ng-maxlength="20" required ng-class="{ valid: (signUpForm.nickName.$dirty && signUpForm.nickName.$valid) ,invalid:(signUpForm.nickName.$dirty && !signUpForm.nickName.$valid)  }" class="form-control logInForm" placeholder="Nickname">
+              <div class="errors">
+                <p class="error" ng-show="signUpForm.nickName.$error.maxlength && signUpForm.nickName.$dirty">Nickname shouldn't be longer than 20 characters.</p>
+                <p class="error" ng-show="signUpForm.nickName.$error.required  && signUpForm.nickName.$dirty">Nickname is required</p>
+              </div>
+            </div>
+          </div>
+          <!--Description-->
+          <div class="form-group">
+            <div class="row">
+              <label for="description">Description(Optional):</label>
+            </div>
+            <div class="row">
+              <textarea ng-model="description" name="description" ng-maxlength="50" ng-class="{ valid: (signUpForm.description.$dirty && signUpForm.description.$valid) ,invalid:(signUpForm.description.$dirty && !signUpForm.description.$valid)  }" class="form-control" rows="4" placeholder="Description (up to 50 characters)"></textarea>
+              <div class="errors">
+                <p class="error" ng-show="signUpForm.description.$error.maxlength && signUpForm.description.$dirty">Nickname shouldn't be longer than 50 characters.</p>
+              </div>
+            </div>
+          </div>
+          <!--Photo-->
+          <div class="form-group">
+            <div class="row">
+              <label for="photo" class="control-label">Photo:</label>
+            </div>
+            <div class="row">
+              <input type="url" ng-model="photo" name="photo" ng-class="{valid: signUpForm.photo.$valid && signUpForm.photo.$dirty , invalid: !signUpForm.photo.$valid && signUpForm.photo.$dirty}" class="form-control" placeholder="Photo's URL"></input>
+              <div class="errors">
+                <div class="error" ng-show="signUpForm.photo.$error.url && signUpForm.photo.$dirty">It's not a valid URL</div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div type="button" class="btn btn-success col-xs-5" ng-click="setPanel(0)">Sign In</div>
+            <input type="submit" value="Sign Up" ng-class="{disabled: !signUpForm.$valid}" class="btn btn-primary col-xs-offset-2 col-xs-5"/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+.topUsersContainer{
+  background-color: white;
+}
+.firstUser{
+  border-radius: 2em 2em 0 0 ;
+}
+.lastUser{
+  border-radius: 0 0 2em 2em ;
+}
+.topRow{
+  margin-top: 3em;
+}
+.leaderboardNickname{
+  font-size: 3em;
+}
+.usersNickName:hover{
+  text-decoration: underline;
+}
+p{
+   word-wrap: break-word;
+}

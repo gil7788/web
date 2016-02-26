@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html ng-App="mainUX">
+  <head>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="HTMLPages/main/mainStyle.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script><!--Bootstrap-->
+    <!--Bootstrap-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script><!--Angular-->
+    <script src="HTMLPages/main/controllers.js"></script><!--My Controllers-->
+    <title>
+
+    </title>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="" href="#">
+          <img src="src/SwordsLogo.png" alt="Logo" class="logo">
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <!--Search Bar-->
+        <form class="navbar-form navbar-left" role="search">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search">
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">Picture</a></li>
+          <li><a href="#">Rank</a></li>
+          <li><a href="#">Messages</a></li>
+          <li><a href="#">Notifications</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <span class="glyphicon glyphicon-cog"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Action</a></li>
+              <li><a href="#">Another action</a></li>
+              <li><a href="#">Something else here</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#">Log Out</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+<div class="col-xs-9 col-ms-12" ng-controller="TabController as panel">
+  <!--Topic selection-->
+  <ul class="nav nav-tabs">
+    <li ng-class="{ active: panel.isSet([0,1,2,3,4]) }"><a href ng-click="panel.setPrimaryTab(0)">Questions</a></li>
+    <li ng-class="{ active: panel.isSet([10,11,12,13,14]) }"><a href ng-click="panel.setPrimaryTab(10)">Tutorials</a></li>
+    <li ng-class="{ active: panel.isSet([20,21,22,23,24]) }"><a href ng-click="panel.setPrimaryTab(20)">Add New Topic</a></li>
+  </ul>
+<!--Main Section-->
+<div class="mainSection">
+  <ul class="nav nav-tabs mainSectionBar">
+    <li ng-class="{ active: panel.isSet([0,10,20]) }"><a href ng-click="panel.setSecondaryTab(0)">New</a></li>
+    <li ng-class="{ active: panel.isSet([1,11,21]) }"><a href ng-click="panel.setSecondaryTab(1)">Popular</a></li>
+    <li ng-class="{ active: panel.isSet([2,12,22]) }"><a href ng-click="panel.setSecondaryTab(2)">Asked By You</a></li>
+    <li ng-class="{ active: panel.isSet([3,13,23]) }"><a href ng-click="panel.setSecondaryTab(3)">Answered By You</a></li>
+    <li ng-class="{ active: panel.isSet([4,14,24]) }"><a href ng-click="panel.setSecondaryTab(4)">Most Relavant</a></li>
+  </ul>
+
+  <div class="quetions" ng-show="panel.isSet([0,1,2,3,4])">
+    <div class="new" ng-show="panel.isSet([0])"></div>
+    <div class="popular" ng-show="panel.isSet([1])"></div>
+    <div class="askedByYou" ng-show="panel.isSet([2])"></div>
+    <div class="answerByYou" ng-show="panel.isSet([3])"></div>
+    <div class="mostRelavant" ng-show="panel.isSet([4])"></div>
+  </div>
+  <div class="tutorials" ng-show="panel.isSet([10,11,12,13,14])">
+    <div class="new" ng-show="panel.isSet([10])"></div>
+    <div class="popular" ng-show="panel.isSet([11])"></div>
+    <div class="askedByYou" ng-show="panel.isSet([12])"></div>
+    <div class="answerByYou" ng-show="panel.isSet([13])"></div>
+    <div class="mostRelavant" ng-show="panel.isSet([14])"></div>
+  </div>
+  <div class="viewNewQuestions" ng-show="panel.isSet([0])">
+    <iframe src="questionsView.html" frameborder="0" class="iFrame"></iframe>
+  </div>
+  <div class="addNewTopic" ng-show="panel.isSet([20])">
+    <div class="AddNewQuestion" >
+      <iframe src="questionForm.html" frameborder="0" class="iFrame"></iframe>
+    </div>
+    <div class="Add New Tutorial" ng-show="panel.isSet([21])"></div>
+
+  </div>
+</div>
+<p>Final tab value:{{panel.finalTab}}</p>
+<p>Final tab value:{{panel.isSet([20])}}</p>
+</div>
+
+
+<div class="col-sm-3 col-xs-0">
+  <div class="list-group eliteUsersSection">
+    <p class="eliteUsersTitle">Top Users:</p>
+    <ul class="eliteUsersList">
+      <li class="list-group-item">1.</li>
+      <li class="list-group-item">2.</li>
+      <li class="list-group-item">3.</li>
+      <li class="list-group-item">4.</li>
+      <li class="list-group-item">5.</li>
+      <li class="list-group-item">6.</li>
+      <li class="list-group-item">7.</li>
+      <li class="list-group-item">8.</li>
+      <li class="list-group-item">9.</li>
+      <li class="list-group-item">10.</li>
+    </ul>
+  </div>
+  <button type="button" class="btn btn-success btn-addition col-xs-12">Add Question</button>
+  <button type="button" class="btn btn-success btn-addition col-xs-12">Add Tutorial</button>
+</div>
+  </body>
+  </html>
