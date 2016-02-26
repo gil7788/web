@@ -9,14 +9,18 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class Utilities {
+import game.spot.items.Ratable;
+import game.spot.items.Timestampable;
 
+public class Utilities {
 	public static boolean sessionValid(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		if (session.isNew()) {
@@ -40,18 +44,30 @@ public class Utilities {
 		return (String) session.getAttribute("username");
 	}
 
+	public static String getNickNameFromHttpSession(HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = request.getSession();
+		try {
+			if (session.isNew()) {
+				session.invalidate();
+				response.getWriter().println("log out");
+				return "";
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return (String) session.getAttribute("nickname");
+	}
+
 	public static void createTable(String tableData) {
 		Connection connection = getConnection();
 		Statement statement = getStatement(connection);
-
 		try {
 			statement.executeUpdate(tableData);
 		} catch (SQLException e) {
 			System.out.println("Using existing table.");
 		}
-
 		closeStatement(statement);
-		closeConnection(connection);
+		closeStatement(statement);
 	}
 
 	public static String readDataFromUser(HttpServletRequest request) {
@@ -299,4 +315,35 @@ public class Utilities {
 		}
 		return rs;
 	}
+
+	public static void sortByRating(List<? extends Ratable> list) {
+		Collections.sort(list, new Comparator<Ratable>() {
+
+			@Override
+			public int compare(Ratable o1, Ratable o2) {
+				double r1 = o1.getRating();
+				double r2 = o2.getRating();
+				if (o1 == o2) {
+					return 0;
+				} else if (r1 < r2) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		});
+	}
+
+	public static void sortByTimestamp(List<? extends Timestampable> list) {
+		Collections.sort(list, new Comparator<Timestampable>() {
+
+			@Override
+			public int compare(Timestampable o1, Timestampable o2) {
+				String t1 = o1.getTimestamp();
+				String t2 = o2.getTimestamp();
+				return Integer.parseInt(t1) - Integer.parseInt(t2);
+			}
+		});
+	}
+
 }

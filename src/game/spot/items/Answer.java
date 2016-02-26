@@ -1,6 +1,6 @@
 package game.spot.items;
 
-public class Answer {
+public class Answer implements Ratable,Timestampable{
 
 	public int id;
 
@@ -13,5 +13,15 @@ public class Answer {
 	public String timestamp;
 
 	public int questionId;
+
+	@Override
+	public double getRating() {
+		return rating;
+	}
+
+	@Override
+	public String getTimestamp() {
+		return timestamp;
+	}
 
 }

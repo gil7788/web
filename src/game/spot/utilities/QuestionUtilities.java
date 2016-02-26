@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import game.spot.items.Question;
+import game.spot.items.Ratable;
 
 public class QuestionUtilities {
 
@@ -53,7 +54,7 @@ public class QuestionUtilities {
 			question.text = (rs.getString(Config.TEXT));
 			question.topics = (rs.getString(Config.TOPICS));
 			question.timestamp = (rs.getString(Config.TIMESTAMP));
-			question.answerCount = (rs.getInt(Config.ANSWERSCOUNTER));
+			question.voteCount = QuestionVoteUtilities.getQuestionVoteCount(question.id);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -75,18 +76,8 @@ public class QuestionUtilities {
 	public static ArrayList<Question> getAllQuestions() {
 		return resultsetToArrayListQuestion(Utilities.getAllTable(Config.QUESTIONS_TABLE_NAME));
 	}
-
-	public static void orderQuestionsByTimestamp(ArrayList<Question> questions) {
-		Comparator<Question> comp = new Comparator<Question>() {
-			@Override
-			public int compare(Question q1, Question q2) {
-				return Integer.parseInt(q2.timestamp) - Integer.parseInt(q1.timestamp); // Descending
-			}
-		};
-		Collections.sort(questions, comp);
-	}
-
-	public static void filterUnansweredQuestions(ArrayList<Question> questions) {
+	
+	public static void filterUnansweredQuestions(List<Question> questions) {
 		for (Question question : questions) {
 			if (question.answerCount != 0) {
 				questions.remove(question);
@@ -94,7 +85,7 @@ public class QuestionUtilities {
 		}
 	}
 
-	public static List<Question> getQuestionsInterval(ArrayList<Question> questions, int startIndex, int endIndex) {
+	public static List<Question> getQuestionsInterval(List<Question> questions, int startIndex, int endIndex) {
 		return Utilities.subList(questions, startIndex, endIndex);
 	}
 
@@ -108,5 +99,18 @@ public class QuestionUtilities {
 	
 	public static Question getQuestionFromId(int id){
 		return resultsetToQuestion(Utilities.getElementById(Config.QUESTIONS_TABLE_NAME, id));
+	}
+
+	public static List<Question> orderQuestionsByTimestamp() {
+		List<Question> questions = getAllQuestions();
+		Utilities.sortByTimestamp(questions);
+		return questions;
+	}
+
+	public static List<Question> getExistingQuestions(int index){
+		List<Question> questions = getAllQuestions();
+		Utilities.sortByRating(questions);
+		questions = getQuestionsInterval(questions, index, index+20);
+		return questions;		
 	}
 }
