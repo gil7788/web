@@ -32,6 +32,12 @@ public class QuestionServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -70,6 +76,20 @@ public class QuestionServlet extends HttpServlet {
 
 	}
 
+	/**
+	 * Perform 'getQuestionsAnswers' method
+	 * 
+	 * @param request
+	 *            the client request
+	 * @param response
+	 *            a response object used to write back to client
+	 * @param questionId
+	 *            the id of the question
+	 * @throws IOException
+	 *             if fails to write back to client
+	 * @throws ServletException
+	 *             if data base utilities fails
+	 */
 	private void getQuestionsAnswers(HttpServletRequest request, HttpServletResponse response, int questionId)
 			throws IOException, ServletException {
 
@@ -87,6 +107,18 @@ public class QuestionServlet extends HttpServlet {
 
 	}
 
+	/**
+	 * Perform 'getQuestion' method
+	 * 
+	 * @param request
+	 *            the client request
+	 * @param response
+	 *            a response object used to write back to client
+	 * @param questionId
+	 *            the question's id
+	 * @throws IOException
+	 *             if fails to write back to client
+	 */
 	private void getQuestion(HttpServletRequest request, HttpServletResponse response, int questionId)
 			throws IOException {
 		Connection connection = Utilities.getConnection();
@@ -136,14 +168,14 @@ public class QuestionServlet extends HttpServlet {
 		Gson gson = new Gson();
 		QuestionListConvertion temp = gson.fromJson(dataFromClient, QuestionListConvertion.class);
 		List<QuestionVote> result = new ArrayList<QuestionVote>();
-		List<QuestionVote> votes = QuestionVoteUtilities.getUsersVote(user);
+		List<QuestionVote> votes = QuestionVoteUtilities.getUserVotes(user);
 		for (Question question : temp.questions) {
 			for (QuestionVote vote : votes) {
 				if (question.id == vote.questionId)
 					result.add(vote);
 			}
 		}
-		for(QuestionVote vote : votes){
+		for (QuestionVote vote : votes) {
 			System.out.println(vote.voter);
 			System.out.println(vote.value);
 			System.out.println(vote.questionId);

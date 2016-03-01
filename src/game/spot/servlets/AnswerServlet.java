@@ -28,10 +28,16 @@ public class AnswerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		if(!ServletUtilities.sessionValid(request, response)){
+
+		if (!ServletUtilities.sessionValid(request, response)) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 
@@ -55,13 +61,19 @@ public class AnswerServlet extends HttpServlet {
 		out.append(gson.toJson(answers));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPut(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		if(!ServletUtilities.sessionValid(request, response)){
+
+		if (!ServletUtilities.sessionValid(request, response)) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
-		
+
 		Pattern p1 = Pattern.compile("/answer/add");
 		Pattern p2 = Pattern.compile("/answer/vote");
 
@@ -78,15 +90,37 @@ public class AnswerServlet extends HttpServlet {
 		}
 	}
 
+	/**
+	 * Perform 'add answer' method
+	 * 
+	 * @param request
+	 *            the client request
+	 * @param response
+	 *            a response object used to write back to client
+	 * @throws IOException
+	 *             if fails to write back to client
+	 */
 	private void addAnswer(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String dataFromClient = ServletUtilities.readDataFromUser(request);
 		Gson gson = new Gson();
 		AnswerConvertion answer = gson.fromJson(dataFromClient, AnswerConvertion.class);
 		String username = ServletUtilities.getUserNameFromHttpSession(request, response);
 
-		AnswersUtilities.addQuestion(username, answer.text, answer.questionId, answer.timestamp);
+		AnswersUtilities.addAnswer(username, answer.text, answer.questionId, answer.timestamp);
 	}
 
+	/**
+	 * Perform 'vote answer' method
+	 * 
+	 * @param request
+	 *            the client request
+	 * @param response
+	 *            a response object used to write back to client
+	 * @throws IOException
+	 *             if fails to write back to client
+	 * @throws ServletException
+	 *             if data base fails
+	 */
 	private void voteAnswer(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("In voteAnswer!");
@@ -99,6 +133,6 @@ public class AnswerServlet extends HttpServlet {
 		} catch (SQLException e) {
 			throw new ServletException(e);
 		}
-}
+	}
 
 }

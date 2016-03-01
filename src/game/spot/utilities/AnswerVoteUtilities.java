@@ -7,14 +7,24 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
 import game.spot.servlets.convertion.items.AnswerVote;
-
+ */
 public class AnswerVoteUtilities {
 
+	/**
+	 * Create the data base table
+	 */
 	public static void createAnswerVotesTable() {
 		Utilities.createTable(Config.ANSWERS_VOTE_TABLE_CREATE);
 	}
 
+	/**
+	 * Insert new row to data base
+	 * 
+	 * @param values
+	 *            the row values
+	 */
 	private static void insertIntoAnswerVote(String[] values) {
 		String columnStructure = "(" + Config.ANSWER_ID + "," + Config.VOTER + "," + Config.VALUE + ")";
 		Utilities.insertIntoTable(Config.ANSWERS_VOTE_TABLE_NAME, values, columnStructure);
@@ -24,6 +34,18 @@ public class AnswerVoteUtilities {
 		return Utilities.getAllTable(Config.ANSWERS_TABLE_NAME, statement);
 	}
 
+	/**
+	 * Add a vote to an answer
+	 * 
+	 * @param answerId
+	 *            the answer id
+	 * @param username
+	 *            the voter username
+	 * @param value
+	 *            the value of the vote (1, 0, -1)
+	 * @throws SQLException
+	 *             if fails to write to data base
+	 */
 	public static void addAnswerVote(int answerId, String username, int value) throws SQLException {
 		// remove previous vote if exist
 		removeAnswerVote(answerId, username);
@@ -37,6 +59,16 @@ public class AnswerVoteUtilities {
 		insertIntoAnswerVote(new String[] { "" + answerId, "'" + username + "'", "" + value });
 	}
 
+	/**
+	 * Remove a vote from an answer
+	 * 
+	 * @param answerId
+	 *            the answer id
+	 * @param username
+	 *            the voter username
+	 * @throws SQLException
+	 *             if fails to write to data base
+	 */
 	public static void removeAnswerVote(int answerId, String username) throws SQLException {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);
@@ -54,6 +86,15 @@ public class AnswerVoteUtilities {
 		}
 	}
 
+	/**
+	 * Get vote count of an answer
+	 * 
+	 * @param answerId
+	 *            the answer id
+	 * @return the answer's vote count
+	 * @throws SQLException
+	 *             if fails to read from data base
+	 */
 	public static int getAnswerVoteCount(int answerId) throws SQLException {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);

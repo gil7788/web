@@ -9,8 +9,19 @@ import game.spot.utilities.QuestionUtilities;
 import game.spot.utilities.QuestionVoteUtilities;
 import game.spot.utilities.UserUtilities;
 
+/**
+ * The Main class is used to init all data base utilities when the server is
+ * started.
+ */
 public class Main implements ServletContextListener {
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.servlet.ServletContextListener#contextInitialized(javax.servlet.
+	 * ServletContextEvent)
+	 */
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		try {
@@ -26,6 +37,12 @@ public class Main implements ServletContextListener {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.
+	 * ServletContextEvent)
+	 */
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 	}

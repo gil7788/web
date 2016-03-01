@@ -9,8 +9,21 @@ import javax.servlet.http.HttpSession;
 
 import game.spot.utilities.UserUtilities;
 
+/**
+ * The ServletUtilities class provide a set of helpers method used by all
+ * servlets. All method are static
+ */
 public class ServletUtilities {
 
+	/**
+	 * Get the username of the user that send the request
+	 * 
+	 * @param request
+	 *            the request from the client
+	 * @param response
+	 *            response object
+	 * @return the username of the active user in this session
+	 */
 	public static String getUserNameFromHttpSession(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		try {
@@ -25,6 +38,13 @@ public class ServletUtilities {
 		return (String) session.getAttribute("username");
 	}
 
+	/**
+	 * Get the relevant path for servlets
+	 * 
+	 * @param request
+	 *            the request from client
+	 * @return relevant path
+	 */
 	static String getPath(HttpServletRequest request) {
 		String fullPath = request.getRequestURI();
 		String contextPath = request.getContextPath();
@@ -35,6 +55,15 @@ public class ServletUtilities {
 		}
 	}
 
+	/**
+	 * Read data from client request
+	 * 
+	 * @param request
+	 *            the request from client
+	 * @return data read from request
+	 * @throws IOException
+	 *             if fails to read data
+	 */
 	static String readDataFromUser(HttpServletRequest request) throws IOException {
 		if (request.getMethod().equals("GET")) {
 			return request.getParameter("data");
@@ -49,6 +78,15 @@ public class ServletUtilities {
 		return dataFromClient;
 	}
 
+	/**
+	 * Checks if this sesstion is valid
+	 * 
+	 * @param request
+	 *            the request from client
+	 * @param response
+	 *            a response object
+	 * @return true if this session is valid, else false
+	 */
 	static boolean sessionValid(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			HttpSession session = request.getSession();

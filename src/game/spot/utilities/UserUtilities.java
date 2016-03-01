@@ -13,17 +13,33 @@ import java.util.List;
 import game.spot.items.Answer;
 import game.spot.items.User;
 
+/**
+ * The UserUtilities class provide a set of method used to read and write users
+ * data to data base. All methods are static
+ */
 public class UserUtilities {
 
+	/**
+	 * Create users table
+	 */
 	public static void createUsersTable() {
 		Utilities.createTable(Config.USERS_TABLE_CREATE);
 	}
 
-	public static void printUsersTable() {
-		System.out.println("Users Table:");
-		Utilities.printTable(Config.USERS_TABLE_NAME);
-	}
-
+	/**
+	 * Create new user
+	 * 
+	 * @param username
+	 *            username of the new user
+	 * @param password
+	 *            password of new user
+	 * @param nickname
+	 *            nickname of new user
+	 * @param description
+	 *            description of new user
+	 * @param photo
+	 *            photo url of the user
+	 */
 	public static void createNewUser(String username, String password, String nickname, String description,
 			String photo) {
 		String[] values = new String[] { username, password, nickname, description, photo };
@@ -32,27 +48,15 @@ public class UserUtilities {
 		Utilities.insertIntoTable(Config.USERS_TABLE_NAME, values, columnStrucutre);
 	}
 
-	public static boolean existsInUsersBy(String value, String column) {
-		Connection connection = null;
-		Statement statement = null;
-		try {
-			connection = Utilities.getConnection();
-			statement = connection.createStatement();
-
-			ResultSet rs = statement.executeQuery(Config.FIND_IN_USERS + column + " = " + "'" + value + "'");
-			/* If user already exists */
-			if (rs.next())
-				return true;
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			Utilities.closeStatement(statement);
-			Utilities.closeConnection(connection);
-		}
-		return false;
-	}
-
+	/**
+	 * Sign in a user, check it's password
+	 * 
+	 * @param username
+	 *            the user username
+	 * @param password
+	 *            the checked password
+	 * @return true if the password match the username, else false
+	 */
 	public static boolean signIn(String username, String password) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);
@@ -73,10 +77,17 @@ public class UserUtilities {
 		return false;
 	}
 
-	public static User getUserById(int id,String user, Statement statement) {
-		return resultSetToUser(Utilities.getElementById(Config.USERS_TABLE_NAME, id),user, statement);
-	}
-
+	public static User getUserById(int id, Statement statement) {
+		return resultSetToUser(Utilities.getElementById(Config.USERS_TABLE_NAME, id), statement);
+	 * 
+	 * @param username
+	 *            the user's username
+	 * @param statement
+	 *            a statement object used to operate data base operations
+	 * @return user with the requested username
+	 * @throws SQLException
+	 *             if fails to read from data base
+	 */
 	public static User getUserByUsername(String username, Statement statement) throws SQLException {
 		ResultSet rs = Utilities.findInTableBySingle("'" + username + "'", Config.USERNAME, Config.USERS_TABLE_NAME,
 				statement);
@@ -87,12 +98,22 @@ public class UserUtilities {
 		return resultSetToUser(rs,username, statement);
 	}
 
+	/**
+	 * Get the leaderboard - a list of most rated users
+	 * 
+	 * @return a list of most rated users
+	 */
 	public static List<User> getLeaderboard(String user) {
 		List<User> users = getAllUsers(user);
 		Utilities.sortByRating(users);
 		return Utilities.subList(users, 0, 20);
 	}
 
+	/**
+	 * Get a list of all users
+	 * 
+	 * @return lsit of all users
+	 */
 	public static List<User> getAllUsers(String user) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);
@@ -111,6 +132,15 @@ public class UserUtilities {
 		return users;
 	}
 
+	/**
+	 * Build user from result set data
+	 * 
+	 * @param rs
+	 *            the result set that holds the user data
+	 * @param statement
+	 *            a statement object used to operate data base operations
+	 * @return user built by the data in result set
+	 */
 	public static User resultSetToUser(ResultSet rs, String username, Statement statement) {
 		User user = new User();
 		try {
@@ -130,11 +160,25 @@ public class UserUtilities {
 		return user;
 	}
 
+	/**
+	 * Get a user expertise
+	 * 
+	 * @param username
+	 *            the user's usernmae
+	 * @return the user's expertise
+	 */
 	public static List<String> getExpertise(String username) {
 		List<String> expertise = getUsersTopicsRank(username);
 		return Utilities.subList(expertise, 0, 5);
 	}
 
+	/**
+	 * Get users topics rank
+	 * 
+	 * @param username
+	 *            the user's username
+	 * @return list of user ranks
+	 */
 	public static List<String> getUsersTopicsRank(String username) {
 		List<Answer> usersAnswers = AnswersUtilities.getAllAnswersByAuthor(username);
 		List<String> answerTopics;
@@ -171,6 +215,13 @@ public class UserUtilities {
 		return topics;
 	}
 
+	/**
+	 * Get nickname of a user by it's username
+	 * 
+	 * @param username
+	 *            the user's username
+	 * @return the user's nickname
+	 */
 	public static String usernameToNickname(String username) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = null;
@@ -191,5 +242,5 @@ public class UserUtilities {
 		Utilities.closeConnection(connection);
 		return nickname;
 	}
-	// -------------------------------------
+
 }

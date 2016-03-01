@@ -13,33 +13,30 @@ import java.util.List;
 import game.spot.items.Answer;
 import game.spot.items.Question;
 
+/**
+ * The QuestionUtilities is used to read and write question from and to the data
+ * base.
+ */
 public class QuestionUtilities {
 
+	/**
+	 * Create the question table
+	 */
 	public static void createQuestionsTable() {
 		Utilities.createTable(Config.QUESTIONS_TABLE_CREATE);
 	}
 
-	public static void printQuestionsTable() {
-		System.out.println("Questions Table:");
-		Utilities.printTable(Config.QUESTIONS_TABLE_NAME);
-	}
-
 	/**************************/
-	public static ResultSet orderQuestionsBy(Statement statement, String orderBy) {
-		return Utilities.orderBy(Config.QUESTIONS_TABLE_NAME, statement, orderBy);
-	}
 
-	public static ResultSet orderByAndFilterQuestions(Statement statement, String orderParameter, String[] column,
-			String[] comparisonOp, String[] value) {
-		return Utilities.orderByAndFilter(Config.QUESTIONS_TABLE_NAME, statement, orderParameter, column, comparisonOp,
-				value);
-	}
-
-	public static ResultSet filterQuestions(Statement statement, String column, String comparisonOp, String value) {
-		return Utilities.filter(Config.QUESTIONS_TABLE_NAME, statement, column, comparisonOp, value);
-	}
-
-	/**************************/
+	/**
+	 * Build a new question from a result set
+	 * 
+	 * @param rs
+	 *            the result set that holds the question data
+	 * @param statement
+	 *            a statement object used to operate data base operations
+	 * @return new question base on the result set data
+	 */
 	public static Question resultsetToQuestion(String user ,ResultSet rs, Statement statement) {
 		Question question = new Question();
 		try {
@@ -58,6 +55,15 @@ public class QuestionUtilities {
 		return question;
 	}
 
+	/**
+	 * Create a list of question base on a result set with questions data
+	 * 
+	 * @param rs
+	 *            the result set that holds all questions data in rows
+	 * @param statement
+	 *            a statement object used to operate data base operations
+	 * @return a list of question built from result set
+	 */
 	public static List<Question> resultsetToQuestionsList(String user,ResultSet rs, Statement statement) {
 		ArrayList<Question> questions = new ArrayList<Question>();
 		try {
@@ -70,6 +76,11 @@ public class QuestionUtilities {
 		return questions;
 	}
 
+	/**
+	 * Get all questions that are in the data base
+	 * 
+	 * @return a list of all questions
+	 */
 	public static List<Question> getAllQuestions(String user) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);
@@ -81,74 +92,110 @@ public class QuestionUtilities {
 		return questions;
 	}
 
-	public static void filterUnansweredQuestions(List<Question> questions,String user) {
-		try {
-			for (Question question : questions) {
-				if (AnswersUtilities.getQuestionAnswers(question.id,user).size() != 0) {
-					questions.remove(question);
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
+	public static void filterUnansweredQuestions(List<Question> questions) {
+				if (AnswersUtilities.getQuestionAnswers(question.id).size() != 0) {
+	/**
+	 * Get interval of a questions list
+	 * 
+	 * @param questions
+	 *            the questions list
+	 * @param startIndex
+	 *            the start index of the interval
+	 * @param endIndex
+	 *            the end index of the interval
+	 * @return interval sub list of the questions list
+	 */
 	public static List<Question> getQuestionsInterval(List<Question> questions, int startIndex, int endIndex) {
 		return Utilities.subList(questions, startIndex, endIndex);
 	}
 
 	// -----------------------------------------------
 
+	/**
+	 * Add a question to the data base
+	 * 
+	 * @param username
+	 *            the username that published the question
+	 * @param text
+	 *            the question text
+	 * @param topics
+	 *            list of all question's topics
+	 * @param timestamp
+	 *            timestamp this question was published
+	 */
 	public static void addQuestion(String username, String text, List<String> topics, String timestamp) {
-		String[] values = new String[] {"'" + username + "'","'" + text + "'","'" + topcisToString(topics) + "'","'" + timestamp + "'"};
+		String[] values = new String[] { "'" + username + "'", "'" + text + "'", "'" + topcisToString(topics) + "'",
+				"'" + timestamp + "'" };
 		String columnStructure = "(" + Config.AUTHOR + "," + Config.TEXT + "," + Config.TOPICS + "," + Config.TIMESTAMP
 				+ ")";
 		Utilities.insertIntoTable(Config.QUESTIONS_TABLE_NAME, values, columnStructure);
 	}
 
+	/**
+	 * Get question by id
+	 * 
+	 * @param id
+	 *            the id of the requested question
+	 * @param statement
+	 *            a statement object used to operate data base operations
+	 * @return the requested question
+	 */
 	public static Question getQuestionFromId(int id, String user,Statement statement) {
 		return resultsetToQuestion(user,Utilities.getElementById(Config.QUESTIONS_TABLE_NAME, id), statement);
 	}
 
-	public static List<Question> orderQuestionsByTimestamp(String user) {
-		List<Question> questions = getAllQuestions(user);
-		Utilities.sortByTimestamp(questions);
-		return questions;
-	}
-
+	public static List<Question> orderQuestionsByTimestamp() {
+		List<Question> questions = getAllQuestions();
+	 * 
+	 * @param index
+	 *            the start index of the requested question
+	 * @return 20 existing items
+	 */
 	public static List<Question> getExistingQuestions(String user,int index) {
 		List<Question> questions = getAllQuestions(user);
 		Utilities.sortByRating(questions);
 		questions = getQuestionsInterval(questions, index, index + 20);
 		for (Question question : questions) {
-				question.authorsNickname = UserUtilities.usernameToNickname(question.author);
+			question.authorsNickname = UserUtilities.usernameToNickname(question.author);
 		}
 		return questions;
 	}
-	
+
+	/**
+	 * Get new questions in interval from index
+	 * 
+	 * @param index
+	 *            start index of requested questions
+	 * @return sub list of new questions
+	 */
 	public static List<Question> getNewQuestions(int index,String user){
 		List<Question> questions = getAllQuestions(user);
 		Utilities.sortByTimestamp(questions);
 		List<Question> result = new ArrayList<Question>();
-		try{
-		
+		try {
 			for (Question question : questions) {
 				if(AnswersUtilities.getQuestionAnswers(question.id,user).size() == 0){
 					result.add(question);
 				}
-			
+
 			}
-		}catch (SQLException e) {
-			// TODO Auto-generated catch block
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		result = getQuestionsInterval(result, index, index + 20);
 		for (Question r : result) {
 			r.authorsNickname = UserUtilities.usernameToNickname(r.author);
-	}
+		}
 		return result;
 	}
-	
+
+	/**
+	 * Get rating of a question
+	 * 
+	 * @param id
+	 *            the question id
+	 * @return rating of a rating
+	 */
 	public static double getQuestionRating(int id,String user) {
 		int voteCount = QuestionVoteUtilities.getQuestionVoteCount(id);
 		double answersRating = 0;
@@ -171,6 +218,13 @@ public class QuestionUtilities {
 
 	}
 
+	/**
+	 * Get topics of a question
+	 * 
+	 * @param id
+	 *            the question id
+	 * @return a list of question's topics
+	 */
 	public static List<String> getQuestionTopics(int id) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = null;
@@ -197,6 +251,13 @@ public class QuestionUtilities {
 		return result;
 	}
 
+	/**
+	 * Convert topics string to topics list
+	 * 
+	 * @param topics
+	 *            topics in one string
+	 * @return a list of topics converted from that one string
+	 */
 	private static List<String> stringToTopics(String topics) {
 		int index = topics.indexOf("#");
 		List<String> result = new ArrayList<String>();
@@ -212,6 +273,13 @@ public class QuestionUtilities {
 		return result;
 	}
 
+	/**
+	 * Topics list convert to one topic string
+	 * 
+	 * @param topics
+	 *            list of topics
+	 * @return on string representing all topics
+	 */
 	private static String topcisToString(List<String> topics) {
 		String result = "";
 		for (String topic : topics) {
@@ -220,6 +288,15 @@ public class QuestionUtilities {
 		return result;
 	}
 
+	/**
+	 * Get popular topics
+	 * 
+	 * @param index
+	 *            index of list
+	 * @param statement
+	 *            a statement object used to operate data base operations
+	 * @return list of popular topics
+	 */
 	public static List<String> getPopularTopics(int index, String user,Statement statement) {
 		final HashMap<String, Double> topicsRating = new HashMap<String, Double>();
 		List<Question> questions = getAllQuestions(user);
@@ -252,6 +329,11 @@ public class QuestionUtilities {
 		return Utilities.subList(topics, index, index + 20);
 	}
 
+	/**
+	 * Get all topics in this data
+	 * 
+	 * @return a list of topics
+	 */
 	public static List<String> getAllTopics(String user) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = null;
@@ -273,6 +355,15 @@ public class QuestionUtilities {
 		return topics;
 	}
 
+	/**
+	 * Get all questions of a topic
+	 * 
+	 * @param topic
+	 *            the requested topic
+	 * @param index
+	 *            the index of the lsit
+	 * @return list of all questions in topic
+	 */
 	public static List<Question> getTopicsQuestions(String topic, int index, String user) {
 		ArrayList<Question> topicsQuestions = new ArrayList<Question>();
 		List<Question> questions = getAllQuestions(user);
@@ -287,11 +378,13 @@ public class QuestionUtilities {
 		return Utilities.subList(topicsQuestions, index, index + 20);
 	}
 
-	public static List<Question> getQuestionsByAutor(List<Question> questions, String author, String user,Statement statement) {
-		return resultsetToQuestionsList(user,Utilities.findInTableBySingle("'" + author + "'", Config.AUTHOR,
-				Config.QUESTIONS_TABLE_NAME, statement), statement);
-	}
-
+	public static List<Question> getQuestionsByAutor(List<Question> questions, String author, Statement statement) {
+		return resultsetToQuestionsList(Utilities.findInTableBySingle("'" + author + "'", Config.AUTHOR,
+	 * 
+	 * @param author
+	 *            the user username
+	 * @return list of all questions submitted by this user
+	 */
 	public static List<Question> getAllQuestionsByAuthor(String user) {
 		List<Question> questions = getAllQuestions(user);
 		List<Question> result = new ArrayList<Question>();
@@ -303,6 +396,13 @@ public class QuestionUtilities {
 		return result;
 	}
 
+	/**
+	 * Get the average rating of a questions list
+	 * 
+	 * @param questions
+	 *            the questions list
+	 * @return average rating of the lsit
+	 */
 	public static double questionAvarage(List<Question> questions) {
 		double value = 0;
 		int counter = questions.size();
@@ -315,6 +415,13 @@ public class QuestionUtilities {
 		return value / counter;
 	}
 
+	/**
+	 * Get the author of a question by it's id
+	 * 
+	 * @param id
+	 *            the question id
+	 * @return the author name
+	 */
 	public static String getAuthorById(int id) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = null;
@@ -334,6 +441,6 @@ public class QuestionUtilities {
 		Utilities.closeStatement(statement);
 		Utilities.closeConnection(connection);
 		return result;
-
 	}
+
 }

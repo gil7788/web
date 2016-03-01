@@ -15,14 +15,19 @@ import javax.servlet.http.HttpSession;
  */
 public class LogOutServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-  
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		Pattern p1 = Pattern.compile("/logout");
-		
 
 		String path = ServletUtilities.getPath(request);
 		Matcher m1 = p1.matcher(path);
-		
 
 		if (m1.find()) {
 			logout(request, response);
@@ -30,7 +35,17 @@ public class LogOutServlet extends HttpServlet {
 			throw new ServletException("Invalid URL");
 		}
 	}
-	
+
+	/**
+	 * Reform a 'logout'
+	 * 
+	 * @param request
+	 *            the client request
+	 * @param response
+	 *            a response object used to write back to client
+	 * @throws IOException
+	 *             if fails to write back to client
+	 */
 	private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		HttpSession session = request.getSession();
 		response.sendRedirect("/GameSpot/index.html");

@@ -27,6 +27,12 @@ public class TopicServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		if (!ServletUtilities.sessionValid(request, response)) {
@@ -43,12 +49,22 @@ public class TopicServlet extends HttpServlet {
 			getPopularTopics(request, response);
 		} else if (m2.find()) {
 			String topic = m2.group(1);
-			getTopicsQuestion(request, response, topic);
+			getTopicQuestions(request, response, topic);
 		} else {
 			throw new ServletException("Invalid URL");
 		}
 	}
 
+	/**
+	 * Perform 'getPopularTopics' method
+	 * 
+	 * @param request
+	 *            the client request
+	 * @param response
+	 *            a response object used to write back to client
+	 * @throws IOException
+	 *             if fails to write back to client
+	 */
 	private void getPopularTopics(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		System.out.println("In getPopularTopics method");
 		Connection connection = Utilities.getConnection();
@@ -57,12 +73,11 @@ public class TopicServlet extends HttpServlet {
 			statement = connection.createStatement();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-		finally{
+		} finally {
 			Utilities.closeStatement(statement);
 			Utilities.closeConnection(connection);
 		}
-		
+
 		String dataFromClient = ServletUtilities.readDataFromUser(request);
 		Gson gson = new Gson();
 
@@ -74,7 +89,19 @@ public class TopicServlet extends HttpServlet {
 		out.append(gson.toJson(topics));
 	}
 
-	private void getTopicsQuestion(HttpServletRequest request, HttpServletResponse response, String topic)
+	/**
+	 * Perform 'getTopicQuestions'
+	 * 
+	 * @param request
+	 *            the client request
+	 * @param response
+	 *            a response object used to write back to client
+	 * @param topic
+	 *            the requested topic name
+	 * @throws IOException
+	 *             if fails to write back to client
+	 */
+	private void getTopicQuestions(HttpServletRequest request, HttpServletResponse response, String topic)
 			throws IOException {
 		System.out.println("In get topics question method");
 		String dataFromClient = ServletUtilities.readDataFromUser(request);
@@ -82,7 +109,7 @@ public class TopicServlet extends HttpServlet {
 		int questionIndex = gson.fromJson(dataFromClient, Integer.class);
 		System.out.println("dataFromClient: " + dataFromClient);
 		List<Question> questions = QuestionUtilities.getTopicsQuestions(topic, questionIndex,ServletUtilities.getUserNameFromHttpSession(request, response));
-		for(Question question : questions ){
+		for (Question question : questions) {
 			System.out.println(question.text);
 		}
 		response.setContentType("application/json");

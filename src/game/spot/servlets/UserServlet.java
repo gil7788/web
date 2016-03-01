@@ -29,6 +29,12 @@ public class UserServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		if (!ServletUtilities.sessionValid(request, response)) {
@@ -54,6 +60,20 @@ public class UserServlet extends HttpServlet {
 		}
 	}
 
+	/**
+	 * Perform 'getUser'
+	 * 
+	 * @param request
+	 *            the client request
+	 * @param response
+	 *            a response object used to write back to client
+	 * @param username
+	 *            the requested username
+	 * @throws IOException
+	 *             if fails to write back to client
+	 * @throws ServletException
+	 *             if data base utilities fails
+	 */
 	private void getUser(HttpServletRequest request, HttpServletResponse response, String username)
 			throws IOException, ServletException {
 		Connection connection = Utilities.getConnection();
@@ -79,6 +99,16 @@ public class UserServlet extends HttpServlet {
 		Utilities.closeConnection(connection);
 	}
 
+	/**
+	 * Perform 'getLeaderboard'
+	 * 
+	 * @param request
+	 *            the client request
+	 * @param response
+	 *            a response object used to write back to client
+	 * @throws IOException
+	 *             if fails to write back to client
+	 */
 	private void getLeaderboard(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		List<User> users = UserUtilities.getLeaderboard(ServletUtilities.getUserNameFromHttpSession(request, response));
 
@@ -88,6 +118,12 @@ public class UserServlet extends HttpServlet {
 		out.append(gson.toJson(users));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -105,6 +141,12 @@ public class UserServlet extends HttpServlet {
 		out.write(success ? "success" : "failure");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPut(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 

@@ -9,22 +9,40 @@ import java.util.List;
 
 import game.spot.items.Answer;
 
+/**
+ * The AnswersUtilities used to read and create answer from and to data base.
+ * All methods are static
+ */
 public class AnswersUtilities {
 
+	/**
+	 * Create the answers table
+	 */
 	public static void createAnswerTable() {
 		Utilities.createTable(Config.ANSWERS_TABLE_CREATE);
 	}
 
-	public static void printAnswerTable(){
-		Utilities.printTable(Config.ANSWERS_TABLE_NAME);
-	} 
-	
+	/**
+	 * Insert new row into answer
+	 * 
+	 * @param values
+	 *            the values of the new row
+	 */
 	private static void insertIntoAnswers(String[] values) {
 		String columnStructure = "(" + Config.AUTHOR + "," + Config.TEXT + "," + Config.QUESTION_ID + ","
 				+ Config.TIMESTAMP + ")";
 		Utilities.insertIntoTable(Config.ANSWERS_TABLE_NAME, values, columnStructure);
 	}
 
+	/**
+	 * Create an answer from a result set
+	 * 
+	 * @param rs
+	 *            the result set with the answer data
+	 * @return new Answer object base on the data from the result set
+	 * @throws SQLException
+	 *             if fails to read data from result set
+	 */
 	private static Answer resultSetToAnswer(ResultSet rs , String user) throws SQLException {
 		Answer answer = new Answer();
 		answer.id = rs.getInt(Config.ID);
@@ -37,6 +55,13 @@ public class AnswersUtilities {
 		return answer;
 	}
 
+	/**
+	 * Create a list of answers from a result set with rows
+	 * 
+	 * @param rs
+	 *            the result set with the answers data
+	 * @return list of answer base on the result set rows
+	 */
 	public static List<Answer> resultsetToAnswers(ResultSet rs,String user) {
 		ArrayList<Answer> answers = new ArrayList<Answer>();
 		try {
@@ -49,11 +74,32 @@ public class AnswersUtilities {
 		return answers;
 	}
 
-	public static void addQuestion(String author, String text, int questionId, String timestamp) {
+	/**
+	 * Add new answer and write to data abse
+	 * 
+	 * @param author
+	 *            the author username of the answer
+	 * @param text
+	 *            the answer text
+	 * @param questionId
+	 *            the question id of this answer
+	 * @param timestamp
+	 *            timestamp this answer was submitted
+	 */
+	public static void addAnswer(String author, String text, int questionId, String timestamp) {
 		insertIntoAnswers(
-				new String[] { "'" + author + "'", "'" + text + "'", "" + questionId , "'" + timestamp + "'" });
+				new String[] { "'" + author + "'", "'" + text + "'", "" + questionId, "'" + timestamp + "'" });
 	}
 
+	/**
+	 * Get an answer by it's id
+	 * 
+	 * @param answerId
+	 *            the id of the requested answer
+	 * @return the requested answer
+	 * @throws SQLException
+	 *             if fails to read from data base
+	 */
 	public static Answer getAnswer(int answerId,String user) throws SQLException {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);
@@ -79,6 +125,15 @@ public class AnswersUtilities {
 		return answer;
 	}
 
+	/**
+	 * Get all answers of a question
+	 * 
+	 * @param questionId
+	 *            the question id
+	 * @return a list with all answer of the question
+	 * @throws SQLException
+	 *             if fails to read from data base
+	 */
 	public static List<Answer> getQuestionAnswers(int questionId,String user) throws SQLException {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);
@@ -104,6 +159,11 @@ public class AnswersUtilities {
 		return answers;
 	}
 
+	/**
+	 * Get all answers stored in data base
+	 * 
+	 * @return a list of all answers
+	 */
 	public static List<Answer> getAllAnswers(String user) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);
@@ -115,6 +175,13 @@ public class AnswersUtilities {
 		return answers;
 	}
 
+	/**
+	 * Get all answers in this data by a specific user
+	 * 
+	 * @param author
+	 *            the author username
+	 * @return a list of all author's answers
+	 */
 	public static List<Answer> getAllAnswersByAuthor(String user) {
 		List<Answer> answers = getAllAnswers(user);
 		List<Answer> result = new ArrayList<Answer>();
@@ -126,6 +193,13 @@ public class AnswersUtilities {
 		return result;
 	}
 
+	/**
+	 * Get the average rating of a answers list
+	 * 
+	 * @param answers
+	 *            a list of answers
+	 * @return the average rating
+	 */
 	public static double answerAvarage(List<Answer> answers) {
 		double value = 0;
 		int counter = answers.size();
@@ -137,4 +211,5 @@ public class AnswersUtilities {
 		}
 		return value / counter;
 	}
+
 }
