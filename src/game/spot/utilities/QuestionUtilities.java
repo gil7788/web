@@ -92,8 +92,6 @@ public class QuestionUtilities {
 		return questions;
 	}
 
-	public static void filterUnansweredQuestions(List<Question> questions) {
-				if (AnswersUtilities.getQuestionAnswers(question.id).size() != 0) {
 	/**
 	 * Get interval of a questions list
 	 * 
@@ -144,13 +142,6 @@ public class QuestionUtilities {
 		return resultsetToQuestion(user,Utilities.getElementById(Config.QUESTIONS_TABLE_NAME, id), statement);
 	}
 
-	public static List<Question> orderQuestionsByTimestamp() {
-		List<Question> questions = getAllQuestions();
-	 * 
-	 * @param index
-	 *            the start index of the requested question
-	 * @return 20 existing items
-	 */
 	public static List<Question> getExistingQuestions(String user,int index) {
 		List<Question> questions = getAllQuestions(user);
 		Utilities.sortByRating(questions);
@@ -378,13 +369,7 @@ public class QuestionUtilities {
 		return Utilities.subList(topicsQuestions, index, index + 20);
 	}
 
-	public static List<Question> getQuestionsByAutor(List<Question> questions, String author, Statement statement) {
-		return resultsetToQuestionsList(Utilities.findInTableBySingle("'" + author + "'", Config.AUTHOR,
-	 * 
-	 * @param author
-	 *            the user username
-	 * @return list of all questions submitted by this user
-	 */
+
 	public static List<Question> getAllQuestionsByAuthor(String user) {
 		List<Question> questions = getAllQuestions(user);
 		List<Question> result = new ArrayList<Question>();

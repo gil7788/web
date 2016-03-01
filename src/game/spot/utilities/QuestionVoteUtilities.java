@@ -137,17 +137,17 @@ public class QuestionVoteUtilities {
 		Utilities.closeConnection(connection);
 		return result;
 	}
-	
+
 	public static int getUserVote(String user, int questionId) {
-		List<QuestionVote> userVotes = getUsersVote(user);
-		for(QuestionVote vote : userVotes){
-			if(vote.questionId == questionId){
+		List<QuestionVote> userVotes = getUserVotes(user);
+		for (QuestionVote vote : userVotes) {
+			if (vote.questionId == questionId) {
 				return vote.value;
 			}
 		}
 		return 0;
 	}
-	
+
 	public static int getQuestionVoteCount(int id) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = null;

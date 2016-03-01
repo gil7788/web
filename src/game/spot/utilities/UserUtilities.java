@@ -77,17 +77,6 @@ public class UserUtilities {
 		return false;
 	}
 
-	public static User getUserById(int id, Statement statement) {
-		return resultSetToUser(Utilities.getElementById(Config.USERS_TABLE_NAME, id), statement);
-	 * 
-	 * @param username
-	 *            the user's username
-	 * @param statement
-	 *            a statement object used to operate data base operations
-	 * @return user with the requested username
-	 * @throws SQLException
-	 *             if fails to read from data base
-	 */
 	public static User getUserByUsername(String username, Statement statement) throws SQLException {
 		ResultSet rs = Utilities.findInTableBySingle("'" + username + "'", Config.USERNAME, Config.USERS_TABLE_NAME,
 				statement);
@@ -95,7 +84,7 @@ public class UserUtilities {
 			// No such user
 			return null;
 		}
-		return resultSetToUser(rs,username, statement);
+		return resultSetToUser(rs, username, statement);
 	}
 
 	/**
@@ -121,7 +110,7 @@ public class UserUtilities {
 		List<User> users = new ArrayList<User>();
 		try {
 			while (rs.next()) {
-				users.add(resultSetToUser(rs,user, statement));
+				users.add(resultSetToUser(rs, user, statement));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

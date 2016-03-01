@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import game.spot.servlets.convertion.items.AnswerVote;
+
 /**
 import game.spot.servlets.convertion.items.AnswerVote;
  */
