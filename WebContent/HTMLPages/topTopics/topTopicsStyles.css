@@ -13,13 +13,20 @@
 .leaderboardNickname{
   font-size: 3em;
 }
-.leaderboardExpertise{
-  font-size: 3em;
-}
 .usersNickName:hover{
   text-decoration: underline;
 }
 p{
    word-wrap: break-word;
-   font-size: 3em;
+}
+.myTopic:hover{
+  text-decoration:none !important;
+}
+.myTopic{
+  margin: auto !important;
+  color:black !important;
+  font-size: 3em !important;
+}
+.topicIndex{
+  font-size: 3em;
 }

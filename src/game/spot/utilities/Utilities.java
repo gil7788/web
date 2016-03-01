@@ -1,7 +1,5 @@
 package game.spot.utilities;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -13,52 +11,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import game.spot.items.Ratable;
 import game.spot.items.Timestampable;
 
 public class Utilities {
-	public static boolean sessionValid(HttpServletRequest request, HttpServletResponse response) {
-		HttpSession session = request.getSession();
-		if (session.isNew()) {
-			session.invalidate();
-			return false;
-		} else
-			return true;
-	}
 
-	public static String getUserNameFromHttpSession(HttpServletRequest request, HttpServletResponse response) {
-		HttpSession session = request.getSession();
-		try {
-			if (session.isNew()) {
-				session.invalidate();
-				response.getWriter().println("log out");
-				return "";
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return (String) session.getAttribute("username");
-	}
-
-	public static String getNickNameFromHttpSession(HttpServletRequest request, HttpServletResponse response) {
-		HttpSession session = request.getSession();
-		try {
-			if (session.isNew()) {
-				session.invalidate();
-				response.getWriter().println("log out");
-				return "";
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return (String) session.getAttribute("nickname");
-	}
-
-	public static void createTable(String tableData) {
+	static void createTable(String tableData) {
 		Connection connection = getConnection();
 		Statement statement = getStatement(connection);
 		try {
@@ -68,21 +26,6 @@ public class Utilities {
 		}
 		closeStatement(statement);
 		closeStatement(statement);
-	}
-
-	public static String readDataFromUser(HttpServletRequest request) {
-		try {
-			BufferedReader reader = request.getReader();
-			String dataFromClient = "";
-			String line = "";
-			while ((line = reader.readLine()) != null) {
-				dataFromClient += line;
-			}
-			return dataFromClient;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return "";
 	}
 
 	public static Connection getConnection() {
@@ -118,7 +61,7 @@ public class Utilities {
 		}
 	}
 
-	public static void closeResultSet(ResultSet rs) {
+	static void closeResultSet(ResultSet rs) {
 		try {
 
 			if (rs != null)
@@ -128,18 +71,19 @@ public class Utilities {
 		}
 	}
 
-	public static ResultSet findInTableBySingle(String value, String column, Statement statement, String tableName) {
+	static ResultSet findInTableBySingle(String value, String column, String tableName , Statement statement) {
 		try {
+			
 			/* If user already exists */
 			return statement
-					.executeQuery("SELECT * FROM " + tableName + " WHERE " + column + " = " + "'" + value + "'");
+					.executeQuery("SELECT * FROM " + tableName + " WHERE " + column + " = " +  value );
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static Statement getStatement(Connection connection) {
+	static Statement getStatement(Connection connection) {
 		try {
 			Statement statement = connection.createStatement();
 			return statement;
@@ -149,22 +93,27 @@ public class Utilities {
 		return null;
 	}
 
-	public static void insertIntoTable(String tableName, String[] values, String columnStructure) {
+	static void insertIntoTable(String tableName, String[] values, String columnStructure) {
 		Connection connection = null;
 		Statement statement = null;
 		try {
 			connection = getConnection();
 			statement = connection.createStatement();
 			/* Add user */
-			String insertString = "INSERT INTO " + tableName + columnStructure + " VALUES (";
+			String insertString = "INSERT INTO " + tableName + " " + columnStructure + " VALUES (";
 
 			for (int i = 0; i < values.length; i++) {
-				if (i != values.length - 1)
-					insertString = insertString + values[i] + " , ";
-				else
-					insertString = insertString + values[i] + " ) ";
+				
+				if (i != values.length - 1){
+						insertString = insertString + values[i] + " , ";
+				}		
+				else{
+						insertString = insertString + values[i] + " ) ";
+				}
+					
 
 			}
+			System.out.println(insertString);
 			statement.executeUpdate(insertString);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -174,7 +123,7 @@ public class Utilities {
 		}
 	}
 
-	public static void deleteFromTable(String tableName, String[] columns, String[] values) {
+	static void deleteFromTable(String tableName, String[] columns, String[] values) {
 		Connection connection = null;
 		Statement statement = null;
 		try {
@@ -197,18 +146,14 @@ public class Utilities {
 		}
 	}
 
-	public static void deleteFromTableById(String tableName, int id) {
-		deleteFromTable(tableName, new String[] { Config.ID }, new String[] { "" + id });
-	}
-
-	public static void printTable(String tableName) {
+	static void printTable(String tableName) {
 		Connection connection = null;
 		Statement statement = null;
 		try {
-			connection = Utilities.getConnection();
+			connection = getConnection();
 			statement = connection.createStatement();
 
-			ResultSet rs = getAllTable(tableName);
+			ResultSet rs = getAllTable(tableName, statement);
 			ResultSetMetaData rsmd = rs.getMetaData();
 			int columnsNumber = rsmd.getColumnCount();
 
@@ -233,7 +178,7 @@ public class Utilities {
 		}
 	}
 
-	public static ResultSet orderBy(String tableName, Statement statement, String orderParameter) {
+	static ResultSet orderBy(String tableName, Statement statement, String orderParameter) {
 		ResultSet rs = null;
 		try {
 			rs = statement.executeQuery("SELECT * FROM " + tableName + " ORDER BY " + orderParameter + " DECS");
@@ -243,25 +188,16 @@ public class Utilities {
 		return rs;
 	}
 
-	public static ResultSet getAllTable(String tableName) {
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
+	static ResultSet getAllTable(String tableName, Statement statement) {
 		try {
-			connection = getConnection();
-			statement = connection.createStatement();
-			rs = statement.executeQuery("SELECT * FROM " + tableName);
+			return statement.executeQuery("SELECT * FROM " + tableName);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			closeConnection(connection);
-			closeStatement(statement);
+			return null;
 		}
-		return rs;
 	}
 
-	public static ResultSet filter(String tableName, Statement statement, String column, String comparisonOp,
-			String value) {
+	static ResultSet filter(String tableName, Statement statement, String column, String comparisonOp, String value) {
 		ResultSet rs = null;
 		try {
 			statement.executeUpdate(
@@ -272,8 +208,8 @@ public class Utilities {
 		return rs;
 	}
 
-	public static ResultSet orderByAndFilter(String tableName, Statement statement, String orderParameter,
-			String[] column, String[] comparisonOp, String[] value) {
+	static ResultSet orderByAndFilter(String tableName, Statement statement, String orderParameter, String[] column,
+			String[] comparisonOp, String[] value) {
 		ResultSet rs = null;
 		try {
 			String SQLRequest = "SELECT * FROM " + tableName + " WHERE ";
@@ -292,14 +228,14 @@ public class Utilities {
 		return rs;
 	}
 
-	public static <T> List<T> subList(List<T> list, int start, int end) {
+	static <T> List<T> subList(List<T> list, int start, int end) {
 		if (list.size() <= start) {
 			return new ArrayList<T>();
 		}
 		return list.subList(start, Math.min(end, list.size()));
 	}
 
-	public static ResultSet getElementById(String tableName, int id) {
+	static ResultSet getElementById(String tableName, int id) {
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
@@ -315,8 +251,19 @@ public class Utilities {
 		}
 		return rs;
 	}
+	
+	static ResultSet getQuestionVotesById(String tableName, int id ,Statement statement , ResultSet rs ) {
+		
+		try {
+			
+			rs = statement.executeQuery("SELECT * FROM " + tableName + " WHERE " + Config.QUESTION_ID + " = " + id);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		return rs;
+	}
 
-	public static void sortByRating(List<? extends Ratable> list) {
+	static void sortByRating(List<? extends Ratable> list) {
 		Collections.sort(list, new Comparator<Ratable>() {
 
 			@Override
@@ -326,22 +273,22 @@ public class Utilities {
 				if (o1 == o2) {
 					return 0;
 				} else if (r1 < r2) {
-					return -1;
-				} else {
 					return 1;
+				} else {
+					return -1;
 				}
 			}
 		});
 	}
 
-	public static void sortByTimestamp(List<? extends Timestampable> list) {
+	static void sortByTimestamp(List<? extends Timestampable> list) {
 		Collections.sort(list, new Comparator<Timestampable>() {
 
 			@Override
 			public int compare(Timestampable o1, Timestampable o2) {
 				String t1 = o1.getTimestamp();
 				String t2 = o2.getTimestamp();
-				return Integer.parseInt(t1) - Integer.parseInt(t2);
+				return (int)(Long.parseLong(t2) - Long.parseLong(t1));
 			}
 		});
 	}

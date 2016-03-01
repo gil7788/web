@@ -1,57 +1,13 @@
 var app=angular.module('questionsView' , []);
 
-app.controller('questionsController' , function($scope,$http,$timeout){
+app.controller('questionsController' , function($scope,$http){
   $scope.showAllQuestions = 0;
   $scope.toggle = 0;
   $scope.questions = {};
+  $scope.answers ={};
   $scope.votes;
 
   $scope.elementsIndex = -20;
-
-  $scope.checkUser = function(username,index){
-    window.alert("checkUser");
-    $timeout(showTime, 3000);
-    if(username == localStorage.user){
-      function showTime() {
-        $scope.questions[index].showError =  true;
-      }
-      $scope.questions[index].showError =  false;
-    }
-    $scope.questions[index].showError =  false;
-  }
-
-  $scope.getVotes = function(){
-    $scope.username = localStorage.user;
-
-    var request = {
-      method: "GET",
-      url: "/GameSpot/question/votes/" + $scope.username,
-      params: {
-        data : {
-          questions : $scope.questions
-        }
-      }
-    };
-    var successFunction = function(response){
-      var votes = response.data;
-      var questions = $scope.questions;
-
-      for(var i = 0; i<votes.length; i++){
-        for(var j = 0; j<questions.length; j++){
-          window.alert("vote.questionId: " + vote.questionId +" \n question.id: " + question.id);
-          if(votes[i].questionId == questions[j].id){
-            questions[i].value = votes[j].value;
-          }
-        }
-      }
-    };
-    var failureFunction = function(response){
-      window.alert("Error!");
-    };
-    window.alert("Url: "+request.url);
-    window.alert("Data: "+request.data);
-    $http(request).then(successFunction,failureFunction);
-  }
 
   $scope.getQuestions = function(value){
     var temp = $scope.elementsIndex;
@@ -59,7 +15,7 @@ app.controller('questionsController' , function($scope,$http,$timeout){
     var date = new Date();
     var request = {
       method: "GET",
-      url: "/GameSpot/question/newquestions",
+      url: "/GameSpot/question/existingquestions",
       params: {
         data : temp
       }
@@ -74,7 +30,6 @@ app.controller('questionsController' , function($scope,$http,$timeout){
         }
         else{
           $scope.questions = response.data;
-          $scope.getVotes();
         }
       }
       $scope.elementsIndex = temp;
@@ -86,13 +41,12 @@ app.controller('questionsController' , function($scope,$http,$timeout){
       $http(request).then(successFunction,failureFunction);
     }
   };
-  $scope.getQuestions(20);
+
   $scope.arrayToString = function(string){
       return string.join(", ");
   };
-
   $scope.sendAnswer = function(description,id){
-
+    alert("In sendAnswer,Text:" + description);
     var request = {
       method: "PUT",
       url: "/GameSpot/answer/add",
@@ -111,6 +65,30 @@ app.controller('questionsController' , function($scope,$http,$timeout){
 
     $http(request).then(successFunction,failureFunction);
   };
+
+  $scope.getAnswersToQuestion = function(i){
+    var questionId = $scope.questions[i].id;
+    var request = {
+      method: "GET",
+      url: "/GameSpot/question/"+questionId+"/answers",
+      params:{}
+    };
+    var successFunction = function(response){
+      //alert(response.data.text);
+      $scope.questions[i].answers = response.data;
+    };
+    var failureFunction = function(response){
+      window.alert("Error");
+    };
+    //alert("in getAnswersToQuestion method");
+    $http(request).then(successFunction,failureFunction);
+  };
+
+  $scope.getAnswers = function(){
+    for(i=0;i<$scope.questions.length;i++){
+      $scope.getAnswersToQuestion(i);
+    }
+  }
 
   $scope.upVote=function(index,id){
     if($scope.questions[index].value == 1){
@@ -158,6 +136,54 @@ app.controller('questionsController' , function($scope,$http,$timeout){
       window.alert("Error");
     };
 
+    $http(request).then(successFunction,failureFunction);
+  };
+  $scope.answerUpVote = function(questionIndex,answerIndex,answerId){
+    if($scope.questions[questionIndex].answers[answerIndex].value == 1){
+      $scope.answerVote(answerId,0);
+      $scope.questions[questionIndex].answers[answerIndex].value = 0;
+      $scope.questions[questionIndex].answers[answerIndex].rating -= 1;
+    }
+    else{
+      $scope.answerVote(answerId,1);
+      if($scope.questions[questionIndex].answers[answerIndex].value == -1)
+        $scope.questions[questionIndex].answers[answerIndex].rating += 1;
+      $scope.questions[questionIndex].answers[answerIndex].rating += 1;
+      $scope.questions[questionIndex].answers[answerIndex].value = 1;
+    }
+  }
+  $scope.answerDownVote=function(questionIndex,answerIndex,answerId){
+    if($scope.questions[questionIndex].answers[answerIndex].value == -1){
+      $scope.answerVote(answerId,0);
+      $scope.questions[questionIndex].answers[answerIndex].value = 0;
+      $scope.questions[questionIndex].answers[answerIndex].rating += 1;
+    }
+    else{
+      $scope.answerVote(answerId,-1);
+      if($scope.questions[questionIndex].answers[answerIndex].value == 1)
+        $scope.questions[questionIndex].answers[answerIndex].rating -= 1;
+      $scope.questions[questionIndex].answers[answerIndex].rating -= 1;
+      $scope.questions[questionIndex].answers[answerIndex].value = -1;
+    }
+  };
+
+
+  $scope.answerVote = function(id , value){
+    var request = {
+      method: "PUT",
+      url: "/GameSpot/answer/vote",
+      data : {
+        value : value,
+        id : id
+      }
+    };
+    var successFunction = function(response){
+
+    };
+    var failureFunction = function(response){
+      window.alert("Error");
+    };
+    window.alert("Url: " + request.url);
     $http(request).then(successFunction,failureFunction);
   };
 });

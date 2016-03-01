@@ -15,9 +15,13 @@ public class AnswersUtilities {
 		Utilities.createTable(Config.ANSWERS_TABLE_CREATE);
 	}
 
+	public static void printAnswerTable(){
+		Utilities.printTable(Config.ANSWERS_TABLE_NAME);
+	} 
+	
 	private static void insertIntoAnswers(String[] values) {
 		String columnStructure = "(" + Config.AUTHOR + "," + Config.TEXT + "," + Config.QUESTION_ID + ","
-				+ Config.TIMESTAMP + "," + Config.ANSWERSCOUNTER + ")";
+				+ Config.TIMESTAMP + ")";
 		Utilities.insertIntoTable(Config.ANSWERS_TABLE_NAME, values, columnStructure);
 	}
 
@@ -32,9 +36,21 @@ public class AnswersUtilities {
 		return answer;
 	}
 
-	public static void addAnswer(String author, String text, int questionId, String timestamp) {
+	public static List<Answer> resultsetToAnswers(ResultSet rs) {
+		ArrayList<Answer> answers = new ArrayList<Answer>();
+		try {
+			while (rs.next()) {
+				answers.add(resultSetToAnswer(rs));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return answers;
+	}
+
+	public static void addQuestion(String author, String text, int questionId, String timestamp) {
 		insertIntoAnswers(
-				new String[] { "'" + author + "'", "'" + text + "'", "" + questionId + "'" + timestamp + "'" });
+				new String[] { "'" + author + "'", "'" + text + "'", "" + questionId , "'" + timestamp + "'" });
 	}
 
 	public static Answer getAnswer(int answerId) throws SQLException {
@@ -87,4 +103,37 @@ public class AnswersUtilities {
 		return answers;
 	}
 
+	public static List<Answer> getAllAnswers() {
+		Connection connection = Utilities.getConnection();
+		Statement statement = Utilities.getStatement(connection);
+		ResultSet rs = Utilities.getAllTable(Config.ANSWERS_TABLE_NAME, statement);
+		List<Answer> answers = resultsetToAnswers(rs);
+		Utilities.closeResultSet(rs);
+		Utilities.closeStatement(statement);
+		Utilities.closeConnection(connection);
+		return answers;
+	}
+
+	public static List<Answer> getAllAnswersByAuthor(String author) {
+		List<Answer> answers = getAllAnswers();
+		List<Answer> result = new ArrayList<Answer>();
+		for (Answer answer : answers) {
+			if (answer.author.equals(author)) {
+				result.add(answer);
+			}
+		}
+		return result;
+	}
+
+	public static double answerAvarage(List<Answer> answers) {
+		double value = 0;
+		int counter = answers.size();
+		for (Answer answer : answers) {
+			value += answer.rating;
+		}
+		if (counter == 0) {
+			return 0;
+		}
+		return value / counter;
+	}
 }

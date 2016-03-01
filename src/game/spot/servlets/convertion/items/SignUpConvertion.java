@@ -1,6 +1,6 @@
 package game.spot.servlets.convertion.items;
 
-public class NewUser {
+public class SignUpConvertion {
 
 	public String username;
 

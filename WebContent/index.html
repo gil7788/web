@@ -20,7 +20,7 @@
 <body ng-controller="panelController" class="lightGrey">
   <div class="row">
     <header>
-      <h1 class="text-center">Game Zone</h1>
+      <h1 class="text-center">Game Spot</h1>
     </header>
   </div>
   <div class="carousel slide" id="mainCarousel">
@@ -49,7 +49,7 @@
                 <input type="password" ng-model="signInPassword" name="password" required class="form-control logInForm" placeholder="Password">
                 <div class="errors">
                   <div class="error" ng-show="signInForm.password.$error.required && signInForm.password.$dirty">Password is required</div>
-                  <div class="error" ng-show="$scope.authenticationError">	The username and password do not match {{$scope.authenticationError}}</div>
+                  <div class="error" ng-show="authenticationError">	The username and password do not match</div>
                 </div>
               </div>
             </div>

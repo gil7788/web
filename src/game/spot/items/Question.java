@@ -1,14 +1,18 @@
-package game.spot.items;
+	package game.spot.items;
+
+import java.util.List;
 
 public class Question implements Ratable, Timestampable {
 
 	public int id;
 
 	public String author;
+	
+	public String authorsNickname;
 
 	public String text;
 
-	public String topics;
+	public List<String> topics;
 
 	public String timestamp;
 

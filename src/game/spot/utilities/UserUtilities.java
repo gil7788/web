@@ -4,6 +4,14 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+
+import game.spot.items.Answer;
+import game.spot.items.User;
 
 public class UserUtilities {
 
@@ -16,15 +24,11 @@ public class UserUtilities {
 		Utilities.printTable(Config.USERS_TABLE_NAME);
 	}
 
-	public static ResultSet findInUsersBySingle(String value, String column, Statement statement) {
-		return Utilities.findInTableBySingle(value, column, statement, Config.USERS_TABLE_NAME);
-	}
-
 	public static void createNewUser(String username, String password, String nickname, String description,
 			String photo) {
 		String[] values = new String[] { username, password, nickname, description, photo };
 		String columnStrucutre = "(" + Config.USERNAME + "," + Config.PASSWORD + "," + Config.NICKNAME + ","
-				+ Config.DESCRIPTION + "," + Config.PHOTO + "," + Config.QUESTIONSCOUNTER + ")";
+				+ Config.DESCRIPTION + "," + Config.PHOTO + ")";
 		Utilities.insertIntoTable(Config.USERS_TABLE_NAME, values, columnStrucutre);
 	}
 
@@ -49,10 +53,143 @@ public class UserUtilities {
 		return false;
 	}
 
-	// -------------------------------------
-	
-	public static void getUser(String username) {
-		
+	public static boolean signIn(String username, String password) {
+		Connection connection = Utilities.getConnection();
+		Statement statement = Utilities.getStatement(connection);
+		ResultSet rs = Utilities.getAllTable(Config.USERS_TABLE_NAME, statement);
+		try {
+			while (rs.next()) {
+				if ((rs.getString(Config.USERNAME).equals(username))
+						&& (rs.getString(Config.PASSWORD).equals(password)))
+					return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		Utilities.closeResultSet(rs);
+		Utilities.closeStatement(statement);
+		Utilities.closeConnection(connection);
+
+		return false;
 	}
-	
+
+	public static User getUserById(int id, Statement statement) {
+		return resultSetToUser(Utilities.getElementById(Config.USERS_TABLE_NAME, id), statement);
+	}
+
+	public static User getUserByUsername(String username, Statement statement) throws SQLException {
+		ResultSet rs = Utilities.findInTableBySingle("'" + username + "'", Config.USERNAME, Config.USERS_TABLE_NAME,
+				statement);
+		if (!rs.next()) {
+			// No such user
+			return null;
+		}
+		return resultSetToUser(rs, statement);
+	}
+
+	public static List<User> getLeaderboard() {
+		List<User> users = getAllUsers();
+		Utilities.sortByRating(users);
+		return Utilities.subList(users, 0, 20);
+	}
+
+	public static List<User> getAllUsers() {
+		Connection connection = Utilities.getConnection();
+		Statement statement = Utilities.getStatement(connection);
+		ResultSet rs = Utilities.getAllTable(Config.USERS_TABLE_NAME, statement);
+		List<User> users = new ArrayList<User>();
+		try {
+			while (rs.next()) {
+				users.add(resultSetToUser(rs, statement));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		Utilities.closeResultSet(rs);
+		Utilities.closeStatement(statement);
+		Utilities.closeConnection(connection);
+		return users;
+	}
+
+	public static User resultSetToUser(ResultSet rs, Statement statement) {
+		User user = new User();
+		try {
+			user.username = rs.getString(Config.USERNAME);
+			user.nickname = rs.getString(Config.NICKNAME);
+			user.description = rs.getString(Config.DESCRIPTION);
+			user.photo = rs.getString(Config.PHOTO);
+			user.rating = QuestionUtilities.questionAvarage(QuestionUtilities.getAllQuestionsByAuthor(user.username))
+					* 0.2 + 0.8 * AnswersUtilities.answerAvarage(AnswersUtilities.getAllAnswersByAuthor(user.username));
+			user.expertise = getExpertise(user.username);
+			Utilities.subList(user.latestQuestions = QuestionUtilities.getAllQuestionsByAuthor(user.username), 0, 5);
+			Utilities.subList(user.latestAnswers = AnswersUtilities.getAllAnswersByAuthor(user.username), 0, 5);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
+
+	public static List<String> getExpertise(String username) {
+		List<String> expertise = getUsersTopicsRank(username);
+		return Utilities.subList(expertise, 0, 5);
+	}
+
+	public static List<String> getUsersTopicsRank(String username) {
+		List<Answer> usersAnswers = AnswersUtilities.getAllAnswersByAuthor(username);
+		List<String> answerTopics;
+		final HashMap<String, Double> topicsRating = new HashMap<String, Double>();
+		for (Answer answer : usersAnswers) {
+			answerTopics = QuestionUtilities.getQuestionTopics(answer.questionId);
+
+			for (String topic : answerTopics) {
+				if (topicsRating.containsKey(topic)) {
+					topicsRating.put(topic, topicsRating.get(topic) + answer.rating);
+				} else
+					topicsRating.put(topic, answer.rating);
+			}
+		}
+
+		List<String> topics = new ArrayList<String>(topicsRating.keySet());
+		Collections.sort(topics, new Comparator<String>() {
+
+			@Override
+			public int compare(String o1, String o2) {
+				double r1 = topicsRating.get(o1);
+				double r2 = topicsRating.get(o2);
+
+				if (r1 == r2) {
+					return 0;
+				} else if (r1 > r2) {
+					return 1;
+				} else {
+					return -1;
+				}
+			}
+		});
+
+		return topics;
+	}
+
+	public static String usernameToNickname(String username) {
+		Connection connection = Utilities.getConnection();
+		Statement statement = null;
+		ResultSet rs = null;
+		String nickname = "";
+		try {
+			statement = connection.createStatement();
+			rs = Utilities.findInTableBySingle("'" + username + "'", Config.USERNAME, Config.USERS_TABLE_NAME,
+					statement);
+			if (!rs.next())
+				return "";
+			nickname = rs.getString(Config.NICKNAME);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		Utilities.closeResultSet(rs);
+		Utilities.closeStatement(statement);
+		Utilities.closeConnection(connection);
+		return nickname;
+	}
+	// -------------------------------------
 }
