@@ -26,9 +26,9 @@
             <div class="selfVotingError row">
               <p class="votingError" ng-init="showError" ng-show="showError">You can't vote for your own post</p>
             </div>
-            <div class="centeredVote  col-xs-offset-3 col-xs-3">
+            <div class="centeredVote col-xs-offset-3 col-xs-3">
               <div class="row">
-                <span class="glyphicon glyphicon-triangle-top" ng-class="{clickedGlyphicon: value == 1}" ng-click="checkUser(question.username,$index);upVote($index,question.id);$event.stopPropagation()" ng-init="value = 0"></span>
+                <span class="glyphicon glyphicon-triangle-top" ng-class="{clickedGlyphicon: value == 1}" ng-click="checkUser(question.username,$index);upVote($index,question.id);$event.stopPropagation()"></span>
               </div>
               <div class="row">
                 <p class="questionsRating">{{question.voteCount}}</p>
@@ -54,15 +54,15 @@
           <h2 class="subTitle">Best Answer:</h2>
           <p class="timestamp" >{{question.answers[0].timestamp | date: 'dd/mm/yyyy hh:mm:ss'}}</p>
           <div class="row contentContainer">
-            <div class="col-xs-2">
+            <div class="centeredVote col-xs-offset-3 col-xs-3">
               <div class="row">
-                <span class="glyphicon glyphicon-triangle-top col-xs-offset-3 col-xs-3" ng-click="upVote($index,question.id)"></span>
+                <span class="glyphicon glyphicon-triangle-top" ng-click="upVote($index,question.id)"></span>
               </div>
               <div class="row">
-                <p class="questionsRating col-xs-offset-1 col-xs-11">{{question.answers[0].voteCount}}</p>
+                <p class="questionsRating">{{question.answers[0].voteCount}}</p>
               </div>
               <div class="row">
-                <span class="glyphicon glyphicon-triangle-bottom col-xs-offset-3 col-xs-3" ng-click="downVote($index,question.id)"></span>
+                <span class="glyphicon glyphicon-triangle-bottom" ng-click="downVote($index,question.id)"></span>
               </div>
             </div>
             <div class="col-xs-9">
@@ -101,15 +101,15 @@
         <div class="bestAnswerContainer col-xs-offset-1 col-xs-10" ng-repeat="answer in question.answers" ng-if="!($index == 0)" ng-show="showAllQuestions">
           <p class="timestamp" >{{answer.timestamp | date: 'dd/mm/yyyy hh:mm:ss'}}</p>
           <div class="row contentContainer">
-            <div class="col-xs-2">
+            <div class="centeredVote col-xs-offset-3 col-xs-3">
               <div class="row">
-                <span class="glyphicon glyphicon-triangle-top col-xs-offset-3 col-xs-3" ng-click="upVote($index,question.id)"></span>
+                <span class="glyphicon glyphicon-triangle-top" ng-click="upVote($index,question.id)"></span>
               </div>
               <div class="row">
-                <p class="questionsRating col-xs-offset-1 col-xs-11">{{answer.rating}}</p>
+                <p class="questionsRating">{{answer.rating}}</p>
               </div>
               <div class="row">
-                <span class="glyphicon glyphicon-triangle-bottom col-xs-offset-3 col-xs-3" ng-click="downVote($index,question.id)"></span>
+                <span class="glyphicon glyphicon-triangle-bottom" ng-click="downVote($index,question.id)"></span>
               </div>
             </div>
             <div class="col-xs-9">

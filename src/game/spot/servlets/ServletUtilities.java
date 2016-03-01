@@ -11,7 +11,7 @@ import game.spot.utilities.UserUtilities;
 
 public class ServletUtilities {
 
-	static String getUserNameFromHttpSession(HttpServletRequest request, HttpServletResponse response) {
+	public static String getUserNameFromHttpSession(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		try {
 			if (session.isNew()) {

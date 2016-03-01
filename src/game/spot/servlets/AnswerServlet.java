@@ -43,7 +43,8 @@ public class AnswerServlet extends HttpServlet {
 		int questiondId = Integer.parseInt(m1.group(1));
 		List<Answer> answers = new ArrayList<Answer>();
 		try {
-			answers = AnswersUtilities.getQuestionAnswers(questiondId);
+			answers = AnswersUtilities.getQuestionAnswers(questiondId,ServletUtilities.getUserNameFromHttpSession(request, response)
+					);
 		} catch (SQLException e) {
 			throw new ServletException(e);
 		}

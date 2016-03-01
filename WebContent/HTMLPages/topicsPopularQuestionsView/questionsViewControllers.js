@@ -1,4 +1,3 @@
-window.alert("I am still alive");
 var app=angular.module('questionsView' , []);
 
 app.controller('questionsController' , function($scope,$http){
@@ -51,13 +50,11 @@ app.controller('questionsController' , function($scope,$http){
       params:{}
     };
     var successFunction = function(response){
-      //alert(response.data.text);
       $scope.questions[i].answers = response.data;
     };
     var failureFunction = function(response){
       window.alert("Error");
     };
-    //alert("in getAnswersToQuestion method");
     $http(request).then(successFunction,failureFunction);
   };
   $scope.getQuestions(20);
@@ -159,7 +156,6 @@ app.controller('questionsController' , function($scope,$http){
     var failureFunction = function(response){
       window.alert("Error");
     };
-    window.alert("Url: " + request.url);
     $http(request).then(successFunction,failureFunction);
   };
 });

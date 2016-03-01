@@ -40,7 +40,7 @@ public class QuestionUtilities {
 	}
 
 	/**************************/
-	public static Question resultsetToQuestion(ResultSet rs, Statement statement) {
+	public static Question resultsetToQuestion(String user ,ResultSet rs, Statement statement) {
 		Question question = new Question();
 		try {
 			question.id = rs.getInt(Config.ID);
@@ -49,7 +49,8 @@ public class QuestionUtilities {
 			question.topics = getQuestionTopics(question.id);
 			question.timestamp = rs.getString(Config.TIMESTAMP);
 			question.voteCount = QuestionVoteUtilities.getQuestionVoteCount(question.id);
-			question.rating = getQuestionRating(question.id);
+			question.rating = getQuestionRating(question.id,user);
+			question.currentUserVote = QuestionVoteUtilities.getUserVote(user, question.id);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -57,11 +58,11 @@ public class QuestionUtilities {
 		return question;
 	}
 
-	public static List<Question> resultsetToQuestionsList(ResultSet rs, Statement statement) {
+	public static List<Question> resultsetToQuestionsList(String user,ResultSet rs, Statement statement) {
 		ArrayList<Question> questions = new ArrayList<Question>();
 		try {
 			while (rs.next()) {
-				questions.add(resultsetToQuestion(rs, statement));
+				questions.add(resultsetToQuestion(user,rs, statement));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -69,21 +70,21 @@ public class QuestionUtilities {
 		return questions;
 	}
 
-	public static List<Question> getAllQuestions() {
+	public static List<Question> getAllQuestions(String user) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);
 		ResultSet rs = Utilities.getAllTable(Config.QUESTIONS_TABLE_NAME, statement);
-		List<Question> questions = resultsetToQuestionsList(rs, statement);
+		List<Question> questions = resultsetToQuestionsList(user,rs, statement);
 		Utilities.closeResultSet(rs);
 		Utilities.closeStatement(statement);
 		Utilities.closeConnection(connection);
 		return questions;
 	}
 
-	public static void filterUnansweredQuestions(List<Question> questions) {
+	public static void filterUnansweredQuestions(List<Question> questions,String user) {
 		try {
 			for (Question question : questions) {
-				if (AnswersUtilities.getQuestionAnswers(question.id).size() != 0) {
+				if (AnswersUtilities.getQuestionAnswers(question.id,user).size() != 0) {
 					questions.remove(question);
 				}
 			}
@@ -105,18 +106,18 @@ public class QuestionUtilities {
 		Utilities.insertIntoTable(Config.QUESTIONS_TABLE_NAME, values, columnStructure);
 	}
 
-	public static Question getQuestionFromId(int id, Statement statement) {
-		return resultsetToQuestion(Utilities.getElementById(Config.QUESTIONS_TABLE_NAME, id), statement);
+	public static Question getQuestionFromId(int id, String user,Statement statement) {
+		return resultsetToQuestion(user,Utilities.getElementById(Config.QUESTIONS_TABLE_NAME, id), statement);
 	}
 
-	public static List<Question> orderQuestionsByTimestamp() {
-		List<Question> questions = getAllQuestions();
+	public static List<Question> orderQuestionsByTimestamp(String user) {
+		List<Question> questions = getAllQuestions(user);
 		Utilities.sortByTimestamp(questions);
 		return questions;
 	}
 
-	public static List<Question> getExistingQuestions(int index) {
-		List<Question> questions = getAllQuestions();
+	public static List<Question> getExistingQuestions(String user,int index) {
+		List<Question> questions = getAllQuestions(user);
 		Utilities.sortByRating(questions);
 		questions = getQuestionsInterval(questions, index, index + 20);
 		for (Question question : questions) {
@@ -125,14 +126,14 @@ public class QuestionUtilities {
 		return questions;
 	}
 	
-	public static List<Question> getNewQuestions(int index){
-		List<Question> questions = getAllQuestions();
+	public static List<Question> getNewQuestions(int index,String user){
+		List<Question> questions = getAllQuestions(user);
 		Utilities.sortByTimestamp(questions);
 		List<Question> result = new ArrayList<Question>();
 		try{
 		
 			for (Question question : questions) {
-				if(AnswersUtilities.getQuestionAnswers(question.id).size() == 0){
+				if(AnswersUtilities.getQuestionAnswers(question.id,user).size() == 0){
 					result.add(question);
 				}
 			
@@ -148,13 +149,13 @@ public class QuestionUtilities {
 		return result;
 	}
 	
-	public static double getQuestionRating(int id) {
+	public static double getQuestionRating(int id,String user) {
 		int voteCount = QuestionVoteUtilities.getQuestionVoteCount(id);
 		double answersRating = 0;
 
 		List<Answer> answers;
 		try {
-			answers = AnswersUtilities.getQuestionAnswers(id);
+			answers = AnswersUtilities.getQuestionAnswers(id,user);
 
 			for (Answer answer : answers) {
 				answersRating += answer.rating;
@@ -219,16 +220,16 @@ public class QuestionUtilities {
 		return result;
 	}
 
-	public static List<String> getPopularTopics(int index, Statement statement) {
+	public static List<String> getPopularTopics(int index, String user,Statement statement) {
 		final HashMap<String, Double> topicsRating = new HashMap<String, Double>();
-		List<Question> questions = getAllQuestions();
+		List<Question> questions = getAllQuestions(user);
 		for (Question question : questions) {
 			List<String> topics = question.topics;
 			for (String topic : topics) {
 				if (!topicsRating.containsKey(topic)) {
 					topicsRating.put(topic, 0.0);
 				}
-				topicsRating.put(topic, topicsRating.get(topic) + getQuestionRating(question.id));
+				topicsRating.put(topic, topicsRating.get(topic) + getQuestionRating(question.id,user));
 			}
 		}
 		List<String> topics = new ArrayList<String>(topicsRating.keySet());
@@ -251,7 +252,7 @@ public class QuestionUtilities {
 		return Utilities.subList(topics, index, index + 20);
 	}
 
-	public static List<String> getAllTopics() {
+	public static List<String> getAllTopics(String user) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = null;
 		try {
@@ -261,7 +262,7 @@ public class QuestionUtilities {
 		}
 
 		ResultSet rs = null;
-		List<Question> questions = QuestionUtilities.getAllQuestions();
+		List<Question> questions = QuestionUtilities.getAllQuestions(user);
 		ArrayList<String> topics = new ArrayList<String>();
 		for (Question question : questions) {
 			topics.addAll(getQuestionTopics(question.id));
@@ -272,9 +273,9 @@ public class QuestionUtilities {
 		return topics;
 	}
 
-	public static List<Question> getTopicsQuestions(String topic, int index) {
+	public static List<Question> getTopicsQuestions(String topic, int index, String user) {
 		ArrayList<Question> topicsQuestions = new ArrayList<Question>();
-		List<Question> questions = getAllQuestions();
+		List<Question> questions = getAllQuestions(user);
 		for (Question question : questions) {
 			List<String> topics = question.topics;
 			for (String t : topics) {
@@ -286,16 +287,16 @@ public class QuestionUtilities {
 		return Utilities.subList(topicsQuestions, index, index + 20);
 	}
 
-	public static List<Question> getQuestionsByAutor(List<Question> questions, String author, Statement statement) {
-		return resultsetToQuestionsList(Utilities.findInTableBySingle("'" + author + "'", Config.AUTHOR,
+	public static List<Question> getQuestionsByAutor(List<Question> questions, String author, String user,Statement statement) {
+		return resultsetToQuestionsList(user,Utilities.findInTableBySingle("'" + author + "'", Config.AUTHOR,
 				Config.QUESTIONS_TABLE_NAME, statement), statement);
 	}
 
-	public static List<Question> getAllQuestionsByAuthor(String author) {
-		List<Question> questions = getAllQuestions();
+	public static List<Question> getAllQuestionsByAuthor(String user) {
+		List<Question> questions = getAllQuestions(user);
 		List<Question> result = new ArrayList<Question>();
 		for (Question question : questions) {
-			if (question.author.equals(author)) {
+			if (question.author.equals(user)) {
 				result.add(question);
 			}
 		}

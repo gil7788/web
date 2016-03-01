@@ -7,9 +7,7 @@ app.controller('questionsController' , function($scope,$http,$timeout){
   $scope.votes;
 
   $scope.elementsIndex = -20;
-
   $scope.checkUser = function(username,index){
-    window.alert("checkUser");
     $timeout(showTime, 3000);
     if(username == localStorage.user){
       function showTime() {
@@ -38,9 +36,9 @@ app.controller('questionsController' , function($scope,$http,$timeout){
 
       for(var i = 0; i<votes.length; i++){
         for(var j = 0; j<questions.length; j++){
-          window.alert("vote.questionId: " + vote.questionId +" \n question.id: " + question.id);
           if(votes[i].questionId == questions[j].id){
             questions[i].value = votes[j].value;
+            questions[i]
           }
         }
       }
@@ -48,8 +46,6 @@ app.controller('questionsController' , function($scope,$http,$timeout){
     var failureFunction = function(response){
       window.alert("Error!");
     };
-    window.alert("Url: "+request.url);
-    window.alert("Data: "+request.data);
     $http(request).then(successFunction,failureFunction);
   }
 
@@ -141,7 +137,7 @@ app.controller('questionsController' , function($scope,$http,$timeout){
     }
   };
 
-  $scope.vote = function(id , value){
+  $scope.vote = function(id , value, index){
     var request = {
       method: "PUT",
       url: "/GameSpot/question/vote",
@@ -151,8 +147,23 @@ app.controller('questionsController' , function($scope,$http,$timeout){
       }
     };
     var successFunction = function(response){
+      $scope.getQuestion(id,index);
+      //response.data;
+    };
+    var failureFunction = function(response){
+      window.alert("Error");
+    };
 
-      response.data;
+    $http(request).then(successFunction,failureFunction);
+  };
+  $scope.getQuestion = function(id, index){
+    var request = {
+      method: "GET",
+      url: "/GameSpot/question/"+id,
+      data :{}
+    };
+    var successFunction = function(response){
+      $scope.questions[index] = response.data;
     };
     var failureFunction = function(response){
       window.alert("Error");

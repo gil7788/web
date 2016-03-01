@@ -46,7 +46,6 @@ app.controller('questionsController' , function($scope,$http){
       return string.join(", ");
   };
   $scope.sendAnswer = function(description,id){
-    alert("In sendAnswer,Text:" + description);
     var request = {
       method: "PUT",
       url: "/GameSpot/answer/add",
@@ -80,7 +79,6 @@ app.controller('questionsController' , function($scope,$http){
     var failureFunction = function(response){
       window.alert("Error");
     };
-    //alert("in getAnswersToQuestion method");
     $http(request).then(successFunction,failureFunction);
   };
 
@@ -183,7 +181,6 @@ app.controller('questionsController' , function($scope,$http){
     var failureFunction = function(response){
       window.alert("Error");
     };
-    window.alert("Url: " + request.url);
     $http(request).then(successFunction,failureFunction);
   };
 });

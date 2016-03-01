@@ -3,6 +3,10 @@
 import java.util.List;
 
 public class Question implements Ratable, Timestampable {
+	
+	public Question(){
+		
+	}
 
 	public int id;
 
@@ -19,6 +23,8 @@ public class Question implements Ratable, Timestampable {
 	public double rating;
 
 	public int voteCount;
+	
+	public int currentUserVote;
 
 	@Override
 	public double getRating() {

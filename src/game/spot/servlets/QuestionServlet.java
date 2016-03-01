@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,7 +75,7 @@ public class QuestionServlet extends HttpServlet {
 
 		List<Answer> answers;
 		try {
-			answers = AnswersUtilities.getQuestionAnswers(questionId);
+			answers = AnswersUtilities.getQuestionAnswers(questionId,ServletUtilities.getUserNameFromHttpSession(request, response));
 		} catch (SQLException e) {
 			throw new ServletException(e);
 		}
@@ -100,7 +99,7 @@ public class QuestionServlet extends HttpServlet {
 			Utilities.closeStatement(statement);
 			Utilities.closeConnection(connection);
 		}
-		Question question = QuestionUtilities.getQuestionFromId(questionId, statement);
+		Question question = QuestionUtilities.getQuestionFromId(questionId,ServletUtilities.getUserNameFromHttpSession(request, response), statement);
 
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
@@ -114,7 +113,7 @@ public class QuestionServlet extends HttpServlet {
 		Gson gson = new Gson();
 		int questionIndex = Integer.parseInt(dataFromClient);
 
-		List<Question> questions = QuestionUtilities.getNewQuestions(questionIndex);
+		List<Question> questions = QuestionUtilities.getNewQuestions(questionIndex,ServletUtilities.getUserNameFromHttpSession(request, response));
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
 		out.append(gson.toJson(questions));
@@ -125,7 +124,7 @@ public class QuestionServlet extends HttpServlet {
 		Gson gson = new Gson();
 		int questionIndex = Integer.parseInt(dataFromClient);
 
-		List<Question> questions = QuestionUtilities.getExistingQuestions(questionIndex);
+		List<Question> questions = QuestionUtilities.getExistingQuestions(ServletUtilities.getUserNameFromHttpSession(request, response),questionIndex);
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
 		out.append(gson.toJson(questions));

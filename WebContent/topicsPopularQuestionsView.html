@@ -22,18 +22,18 @@
       <div class="questionContent pointer" ng-class="{normalCursor: toggle == 1}" ng-click="toggle = 1">
         <p class="timestamp" >{{question.timestamp | date: 'dd/mm/yyyy hh:mm:ss'}}</p>
         <div class="row contentContainer">
-          <div class="col-xs-2">
+          <div class="centeredVote col-xs-offset-3 col-xs-3">
             <div class="selfVotingError row">
               <p>You can't vote for your own post</p>
             </div>
             <div class="row">
-              <span class="glyphicon glyphicon-triangle-top col-xs-offset-3 col-xs-3" ng-class="{clickedGlyphicon: question.value == 1}" ng-click="upVote($index,question.id);$event.stopPropagation()" ng-init="value = 0"></span>
+              <span class="glyphicon glyphicon-triangle-top" ng-class="{clickedGlyphicon: question.value == 1}" ng-click="upVote($index,question.id);$event.stopPropagation()" ng-init="value = 0"></span>
             </div>
             <div class="row">
-              <p class="questionsRating col-xs-offset-1 col-xs-11">{{question.voteCount}}</p>
+              <p class="questionsRating">{{question.voteCount}}</p>
             </div>
             <div class="row">
-              <span class="glyphicon glyphicon-triangle-bottom col-xs-offset-3 col-xs-3" ng-class="{clickedGlyphicon: question.value == -1}" ng-click="downVote($index,question.id);$event.stopPropagation()"></span>
+              <span class="glyphicon glyphicon-triangle-bottom" ng-class="{clickedGlyphicon: question.value == -1}" ng-click="downVote($index,question.id);$event.stopPropagation()"></span>
             </div>
           </div>
           <div class="col-xs-9">
@@ -52,15 +52,15 @@
           <h2 class="subTitle">Best Answer:</h2>
           <p class="timestamp" >{{question.answers[0].timestamp | date: 'dd/mm/yyyy hh:mm:ss'}}</p>
           <div class="row contentContainer">
-            <div class="col-xs-2">
+            <div class="centeredVote col-xs-offset-3 col-xs-3">
               <div class="row">
-                <span class="glyphicon glyphicon-triangle-top col-xs-offset-3 col-xs-3" ng-class="{clickedGlyphicon: question.answers[0].value == 1}" ng-click="answerUpVote($index,0,answer.id)"></span>
+                <span class="glyphicon glyphicon-triangle-top" ng-class="{clickedGlyphicon: question.answers[0].value == 1}" ng-click="answerUpVote($index,0,answer.id)"></span>
               </div>
               <div class="row">
-                <p class="questionsRating col-xs-offset-1 col-xs-11">{{question.answers[0].rating}}</p>
+                <p class="questionsRating">{{question.answers[0].rating}}</p>
               </div>
               <div class="row">
-                <span class="glyphicon glyphicon-triangle-bottom col-xs-offset-3 col-xs-3" ng-class="{clickedGlyphicon: question.answers[0].value == -1}" ng-click="answerDownVote($index,0,question.id)"></span>
+                <span class="glyphicon glyphicon-triangle-bottom" ng-class="{clickedGlyphicon: question.answers[0].value == -1}" ng-click="answerDownVote($index,0,question.id)"></span>
               </div>
             </div>
             <div class="col-xs-9">
@@ -99,15 +99,15 @@
         <div class="bestAnswerContainer col-xs-offset-1 col-xs-10" ng-repeat="answer in question.answers" ng-if="!($index == 0)" ng-show="showAllQuestions">
           <p class="timestamp" >{{answer.timestamp | date: 'dd/mm/yyyy hh:mm:ss'}}</p>
           <div class="row contentContainer">
-            <div class="col-xs-2">
+            <div class="centeredVote col-xs-offset-3 col-xs-3">
               <div class="row">
-                <span class="glyphicon glyphicon-triangle-top col-xs-offset-3 col-xs-3" ng-class="{clickedGlyphicon: answer.value == 1}" ng-click="answerUpVote($parent.$index,$index,question.id)"></span>
+                <span class="glyphicon glyphicon-triangle-top" ng-class="{clickedGlyphicon: answer.value == 1}" ng-click="answerUpVote($parent.$index,$index,question.id)"></span>
               </div>
               <div class="row">
-                <p class="questionsRating col-xs-offset-1 col-xs-11">{{answer.rating}}</p>
+                <p class="questionsRating">{{answer.rating}}</p>
               </div>
               <div class="row">
-                <span class="glyphicon glyphicon-triangle-bottom col-xs-offset-3 col-xs-3" ng-class="{clickedGlyphicon: answer.value == 1}" ng-click="answerDownVote($parent.$index,$index,question.id)"></span>
+                <span class="glyphicon glyphicon-triangle-bottom" ng-class="{clickedGlyphicon: answer.value == 1}" ng-click="answerDownVote($parent.$index,$index,question.id)"></span>
               </div>
             </div>
             <div class="col-xs-9">

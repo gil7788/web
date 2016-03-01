@@ -80,7 +80,7 @@ public class UserServlet extends HttpServlet {
 	}
 
 	private void getLeaderboard(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		List<User> users = UserUtilities.getLeaderboard();
+		List<User> users = UserUtilities.getLeaderboard(ServletUtilities.getUserNameFromHttpSession(request, response));
 
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();

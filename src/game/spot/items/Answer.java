@@ -13,6 +13,8 @@ public class Answer implements Ratable, Timestampable {
 	public String timestamp;
 
 	public int questionId;
+	
+	public int currentUserVote;
 
 	@Override
 	public double getRating() {

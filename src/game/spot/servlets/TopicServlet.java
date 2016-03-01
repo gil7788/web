@@ -67,7 +67,7 @@ public class TopicServlet extends HttpServlet {
 		Gson gson = new Gson();
 
 		int index = gson.fromJson(dataFromClient, Integer.class);
-		List<String> topics = QuestionUtilities.getPopularTopics(index,statement);
+		List<String> topics = QuestionUtilities.getPopularTopics(index,ServletUtilities.getUserNameFromHttpSession(request, response),statement);
 
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
@@ -81,7 +81,7 @@ public class TopicServlet extends HttpServlet {
 		Gson gson = new Gson();
 		int questionIndex = gson.fromJson(dataFromClient, Integer.class);
 		System.out.println("dataFromClient: " + dataFromClient);
-		List<Question> questions = QuestionUtilities.getTopicsQuestions(topic, questionIndex);
+		List<Question> questions = QuestionUtilities.getTopicsQuestions(topic, questionIndex,ServletUtilities.getUserNameFromHttpSession(request, response));
 		for(Question question : questions ){
 			System.out.println(question.text);
 		}

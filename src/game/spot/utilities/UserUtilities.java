@@ -73,8 +73,8 @@ public class UserUtilities {
 		return false;
 	}
 
-	public static User getUserById(int id, Statement statement) {
-		return resultSetToUser(Utilities.getElementById(Config.USERS_TABLE_NAME, id), statement);
+	public static User getUserById(int id,String user, Statement statement) {
+		return resultSetToUser(Utilities.getElementById(Config.USERS_TABLE_NAME, id),user, statement);
 	}
 
 	public static User getUserByUsername(String username, Statement statement) throws SQLException {
@@ -84,23 +84,23 @@ public class UserUtilities {
 			// No such user
 			return null;
 		}
-		return resultSetToUser(rs, statement);
+		return resultSetToUser(rs,username, statement);
 	}
 
-	public static List<User> getLeaderboard() {
-		List<User> users = getAllUsers();
+	public static List<User> getLeaderboard(String user) {
+		List<User> users = getAllUsers(user);
 		Utilities.sortByRating(users);
 		return Utilities.subList(users, 0, 20);
 	}
 
-	public static List<User> getAllUsers() {
+	public static List<User> getAllUsers(String user) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);
 		ResultSet rs = Utilities.getAllTable(Config.USERS_TABLE_NAME, statement);
 		List<User> users = new ArrayList<User>();
 		try {
 			while (rs.next()) {
-				users.add(resultSetToUser(rs, statement));
+				users.add(resultSetToUser(rs,user, statement));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -111,7 +111,7 @@ public class UserUtilities {
 		return users;
 	}
 
-	public static User resultSetToUser(ResultSet rs, Statement statement) {
+	public static User resultSetToUser(ResultSet rs, String username, Statement statement) {
 		User user = new User();
 		try {
 			user.username = rs.getString(Config.USERNAME);

@@ -25,7 +25,7 @@ public class AnswersUtilities {
 		Utilities.insertIntoTable(Config.ANSWERS_TABLE_NAME, values, columnStructure);
 	}
 
-	private static Answer resultSetToAnswer(ResultSet rs) throws SQLException {
+	private static Answer resultSetToAnswer(ResultSet rs , String user) throws SQLException {
 		Answer answer = new Answer();
 		answer.id = rs.getInt(Config.ID);
 		answer.author = rs.getString(Config.AUTHOR);
@@ -33,14 +33,15 @@ public class AnswersUtilities {
 		answer.rating = AnswerVoteUtilities.getAnswerVoteCount(answer.id);
 		answer.text = rs.getString(Config.TEXT);
 		answer.timestamp = rs.getString(Config.TIMESTAMP);
+		answer.currentUserVote = AnswerVoteUtilities.getUserVote(user, answer.id);
 		return answer;
 	}
 
-	public static List<Answer> resultsetToAnswers(ResultSet rs) {
+	public static List<Answer> resultsetToAnswers(ResultSet rs,String user) {
 		ArrayList<Answer> answers = new ArrayList<Answer>();
 		try {
 			while (rs.next()) {
-				answers.add(resultSetToAnswer(rs));
+				answers.add(resultSetToAnswer(rs,user));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -53,7 +54,7 @@ public class AnswersUtilities {
 				new String[] { "'" + author + "'", "'" + text + "'", "" + questionId , "'" + timestamp + "'" });
 	}
 
-	public static Answer getAnswer(int answerId) throws SQLException {
+	public static Answer getAnswer(int answerId,String user) throws SQLException {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);
 		ResultSet rs = null;
@@ -65,7 +66,7 @@ public class AnswersUtilities {
 			if (!rs.next()) {
 				throw new SQLException("Answer was not found");
 			}
-			answer = resultSetToAnswer(rs);
+			answer = resultSetToAnswer(rs, user);
 		} catch (SQLException e) {
 			throw e;
 
@@ -78,7 +79,7 @@ public class AnswersUtilities {
 		return answer;
 	}
 
-	public static List<Answer> getQuestionAnswers(int questionId) throws SQLException {
+	public static List<Answer> getQuestionAnswers(int questionId,String user) throws SQLException {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);
 		ResultSet rs = null;
@@ -88,7 +89,7 @@ public class AnswersUtilities {
 			rs = statement.executeQuery(
 					"SELECT * FROM " + Config.ANSWERS_TABLE_NAME + " WHERE " + Config.QUESTION_ID + " = " + questionId);
 			while (rs.next()) {
-				Answer answer = resultSetToAnswer(rs);
+				Answer answer = resultSetToAnswer(rs,user);
 				answers.add(answer);
 			}
 		} catch (SQLException e) {
@@ -103,22 +104,22 @@ public class AnswersUtilities {
 		return answers;
 	}
 
-	public static List<Answer> getAllAnswers() {
+	public static List<Answer> getAllAnswers(String user) {
 		Connection connection = Utilities.getConnection();
 		Statement statement = Utilities.getStatement(connection);
 		ResultSet rs = Utilities.getAllTable(Config.ANSWERS_TABLE_NAME, statement);
-		List<Answer> answers = resultsetToAnswers(rs);
+		List<Answer> answers = resultsetToAnswers(rs,user);
 		Utilities.closeResultSet(rs);
 		Utilities.closeStatement(statement);
 		Utilities.closeConnection(connection);
 		return answers;
 	}
 
-	public static List<Answer> getAllAnswersByAuthor(String author) {
-		List<Answer> answers = getAllAnswers();
+	public static List<Answer> getAllAnswersByAuthor(String user) {
+		List<Answer> answers = getAllAnswers(user);
 		List<Answer> result = new ArrayList<Answer>();
 		for (Answer answer : answers) {
-			if (answer.author.equals(author)) {
+			if (answer.author.equals(user)) {
 				result.add(answer);
 			}
 		}

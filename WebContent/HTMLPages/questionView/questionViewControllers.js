@@ -1,5 +1,3 @@
-window.alert("I am still alive");
-
 var app=angular.module('questionsView' , []);
 
 app.controller('questionsController' , function($scope){

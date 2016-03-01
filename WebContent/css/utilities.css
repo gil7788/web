@@ -19,6 +19,9 @@ p{
     border-style: solid;
     border-width: 2px;
 }
+.singleQuestion{
+  border-radius: 0.5em;
+}
 .disabled{
   cursor: auto !important;
 }

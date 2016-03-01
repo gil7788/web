@@ -13,12 +13,12 @@ app.controller('questionFormController' , function($scope,$http){
       }
     };
     var successFunction = function(response){
-      window.alert("Recived Data:" + response.data);
+
     };
     var failureFunction = function(response){
-      window.alert("Recived Data:" + response.data);
+
     };
-    window.alert(request.data);
+    
     $http(request).then(successFunction,failureFunction);
   };
 });
